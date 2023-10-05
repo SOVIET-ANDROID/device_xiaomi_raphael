@@ -46,9 +46,6 @@ rild.libpath=/vendor/lib64/libril-qc-hal-qmi.so
 ro.telephony.handle_audio_direction_changes_between_call_state_changes=false
 persist.vendor.qti.telephony.vt_cam_interface=2
 
-# Thermal
-vendor.thermal.config=thermal_info_config.json
-
 # Time
 persist.timed.enable=true
 
