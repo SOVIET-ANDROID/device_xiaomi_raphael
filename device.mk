@@ -319,6 +319,11 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     android.hardware.keymaster@4.1.vendor
 
+# Kernel
+LOCAL_KERNEL := device/xiaomi/raphael-kernel/Image
+PRODUCT_COPY_FILES += \
+	$(LOCAL_KERNEL):kernel
+
 # LMK tuning
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.lmk.filecache_min_kb=153600 \

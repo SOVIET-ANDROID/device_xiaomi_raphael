@@ -5,6 +5,7 @@
 #
 
 DEVICE_PATH := device/xiaomi/raphael
+KERNEL_PATH := device/xiaomi/raphael-kernel
 
 # ANT+
 BOARD_ANT_WIRELESS_DEVICE := "qualcomm-hidl"
@@ -82,7 +83,11 @@ TARGET_INIT_VENDOR_LIB := //$(DEVICE_PATH):init_xiaomi_raphael
 TARGET_RECOVERY_DEVICE_MODULES ?= init_xiaomi_raphael
 
 # Kernel
+BOARD_BOOT_HEADER_VERSION := 2
 BOARD_KERNEL_BASE := 0x00000000
+BOARD_KERNEL_IMAGE_NAME := Image
+BOARD_KERNEL_PAGESIZE := 4096
+
 BOARD_KERNEL_CMDLINE += console=null
 BOARD_KERNEL_CMDLINE += androidboot.hardware=qcom
 BOARD_KERNEL_CMDLINE += androidboot.usbcontroller=a600000.dwc3
@@ -93,13 +98,16 @@ BOARD_KERNEL_CMDLINE += loop.max_part=16
 BOARD_KERNEL_CMDLINE += androidboot.init_fatal_reboot_target=recovery
 BOARD_KERNEL_CMDLINE += kpti=off
 BOARD_KERNEL_CMDLINE += swiotlb=1
-BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
-BOARD_KERNEL_PAGESIZE := 4096
-BOARD_KERNEL_SEPARATED_DTBO := true
+
+TARGET_NO_KERNEL_OVERRIDE := true
+BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOT_HEADER_VERSION)
 BOARD_RAMDISK_USE_LZ4 := true
-TARGET_KERNEL_CLANG_VERSION := r522817
-TARGET_KERNEL_SOURCE := kernel/xiaomi/raphael
-TARGET_KERNEL_CONFIG := raphael_defconfig
+
+BOARD_INCLUDE_DTB_IN_BOOTIMG := true
+BOARD_PREBUILT_DTBOIMAGE := $(KERNEL_PATH)/dtbo.img
+BOARD_PREBUILT_DTBIMAGE_DIR := $(KERNEL_PATH)/dtb
+BOARD_MKBOOTIMG_ARGS += --dtb $(BOARD_PREBUILT_DTBIMAGE_DIR)/sm8150-v2.dtb
+
 
 # Media
 TARGET_DISABLED_UBWC := true
