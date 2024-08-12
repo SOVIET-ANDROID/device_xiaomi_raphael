@@ -205,9 +205,10 @@ on property:sys.boot_completed=1
     write /proc/sys/vm/dirty_expire_centisecs 3000
     write /proc/sys/vm/dirty_background_ratio 10
 
-    # Setup cpu.shares to throttle background groups (bg ~ 5% sysbg ~ 10%)
-    write /dev/cpuctl/background/cpu.shares 1024
-    write /dev/cpuctl/system-background/cpu.shares 2048
+    # Setup cpu.shares to throttle background groups (bg ~ 2.5% sysbg ~ 5%)
+    write /dev/cpuctl/background/cpu.shares 512
+    write /dev/cpuctl/system-background/cpu.shares 1024
+    write /dev/cpuctl/dex2oat/cpu.shares 512
     write /dev/cpuctl/system/cpu.shares 20480
     # We only have system and background groups holding tasks and the groups below are empty
     write /dev/cpuctl/camera-daemon/cpu.shares 20480
