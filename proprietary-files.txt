@@ -189,12 +189,12 @@ vendor/etc/cne/wqeclient/VZW/VZW_profile5.xml|f76c894f3c6d5b6ed35113a088dc3174c9
 vendor/etc/cne/wqeclient/VZW/VZW_profile6.xml|14d136e7fcc682311757d3edc0b9d3eaeba11815
 vendor/etc/default-permissions/com.qualcomm.qti.cne.xml|c63c37d067e3009735fbc54d4603d43d7d6623e1
 vendor/etc/init/cnd.rc|3a5183df3479500fb729493bc56c71166fc10bce
-vendor/lib64/libcne.so|e14de8a25090dbf51b12ec5df580987ea2aa21a0
+vendor/lib64/libcne.so;DISABLE_CHECKELF|e14de8a25090dbf51b12ec5df580987ea2aa21a0
 vendor/lib64/libcneapiclient.so|0973dc05f6d6d9c469fc804693af79e6f3a5056a
 vendor/lib64/libcneoplookup.so|60d6abe85061de4fa75e5e4f69d477f37f1f8f64
 vendor/lib64/libcneqmiutils.so|c2e2658698eb8b312ca6b28c1a1088a331bb28b9
 vendor/lib64/libwms.so|1c06f999f2aec3bd58237d4892fee0cec40469fd
-vendor/lib64/libwqe.so|79e58584614ca98773122e9dfa976caf366d2cc5
+vendor/lib64/libwqe.so;DISABLE_CHECKELF|79e58584614ca98773122e9dfa976caf366d2cc5
 vendor/lib64/libxml.so|6d5f9b6be0212bde7b961803fec9302e8529b54a
 vendor/lib64/vendor.qti.data.factory@2.0.so|748bfbaa57a409b8962e2b1725e1415e423a7315
 vendor/lib64/vendor.qti.data.factory@2.1.so|bb1f3fa22563282ee24bf03ca681fdc45551feef
@@ -380,7 +380,7 @@ vendor/lib64/camera/fdconfigpreviewlite.bin
 vendor/lib64/camera/fdconfigvideo.bin
 vendor/lib64/camera/fdconfigvideolite.bin
 vendor/lib64/hw/camera.qcom.so
-vendor/lib64/hw/com.qti.chi.override.so
+vendor/lib64/hw/com.qti.chi.override.so;DISABLE_CHECKELF
 vendor/lib64/libFaceGrade.so
 vendor/lib64/libHalSuperSensorServer.so
 vendor/lib64/libSNPE.so
@@ -389,10 +389,10 @@ vendor/lib64/libSuperSensorCPU.so
 vendor/lib64/libVDClearShot.so
 vendor/lib64/libXMFD_AgeGender.so
 vendor/lib64/lib_denoiser3.so
-vendor/lib64/libalAILDC.so
+vendor/lib64/libalAILDC.so;DISABLE_CHECKELF
 vendor/lib64/libalCFR.so
-vendor/lib64/libalLDC.so
-vendor/lib64/libalhLDC.so
+vendor/lib64/libalLDC.so;DISABLE_CHECKELF
+vendor/lib64/libalhLDC.so;DISABLE_CHECKELF
 vendor/lib64/libarcsat.so
 vendor/lib64/libarcsoft_beautyshot.so
 vendor/lib64/libarcsoft_bodyslim.so
@@ -400,9 +400,9 @@ vendor/lib64/libarcsoft_distortion_correction.so
 vendor/lib64/libarcsoft_dualcam_image_optical_zoom.so
 vendor/lib64/libarcsoft_dualcam_optical_zoom_control.so
 vendor/lib64/libarcsoft_dualcam_refocus.so
-vendor/lib64/libarcsoft_dualcam_refocus_front.so
-vendor/lib64/libarcsoft_dualcam_refocus_rear_t.so
-vendor/lib64/libarcsoft_dualcam_refocus_rear_w.so
+vendor/lib64/libarcsoft_dualcam_refocus_front.so;DISABLE_CHECKELF
+vendor/lib64/libarcsoft_dualcam_refocus_rear_t.so;DISABLE_CHECKELF
+vendor/lib64/libarcsoft_dualcam_refocus_rear_w.so;DISABLE_CHECKELF
 vendor/lib64/libarcsoft_high_dynamic_range.so
 vendor/lib64/libarcsoft_low_light_hdr.so
 vendor/lib64/libarcsoft_portrait_lighting.so
@@ -561,7 +561,7 @@ vendor/lib64/liblocation_api.so
 -vendor/etc/vintf/manifest/vendor.qti.gnss@4.0-service.xml|6514b13f55abc0acc28e004c35ff93fb972d61a9
 vendor/bin/garden_app|4d5d58b8d8ecbb82db31b6e7f26f9fb749f9393b
 vendor/bin/loc_launcher|515038f060e83db862cca5cc8b79a3eb07d689f4
-vendor/bin/lowi-server|6ec426344a6d6e9896d0f5daba63c9d7d9145528
+vendor/bin/lowi-server;DISABLE_CHECKELF|6ec426344a6d6e9896d0f5daba63c9d7d9145528
 vendor/bin/mlid|b697c6acebe4ed417c1828b8e2dff6f4bc726547
 vendor/bin/slim_daemon|7f4cbbd75f5ef58ddddbace7c0c6477564e87d8a
 vendor/bin/xtra-daemon|fb490d2f3fe4d7ab2c2f976d392d41ab3d7b1e73
@@ -771,7 +771,7 @@ vendor/lib/libOmxEvrcDec.so|e26f066a89944ee36450c5325b45e5529de60882
 vendor/lib/libOmxG711Dec.so|7e310d958e5a68caeacef44a48acf0be5497beb6
 vendor/lib/libOmxQcelp13Dec.so|ec0650fee64998b47cfed806cda26f0eb8fd85a8
 vendor/lib/libOmxVideoDSMode.so|7c971196e417c1632150f1749bf18ded10def8b5
-vendor/lib/libOmxVpp.so|ff50ac05e0b97a6a1a018164cfd1e4d601fc170c
+vendor/lib/libOmxVpp.so;DISABLE_CHECKELF|ff50ac05e0b97a6a1a018164cfd1e4d601fc170c
 vendor/lib/libOmxWmaDec.so|09ea4d8b190fbfcc61698c46f46c97b0f45fcdfc
 vendor/lib/libdsd2pcm.so|c5ab1afd7a5a23bf83d80b5ac74247c3dd2085af
 vendor/lib/libmm-color-convertor.so|904f9daeca6323b7d240c2f640a92852bac88146
@@ -911,7 +911,7 @@ system_ext/lib64/vendor.qti.imsrtpservice@3.0.so|34da5e45ae4817ccff75c6b8d1d0c12
 
 # Radio (IMS) - from LA.UM.9.1.r1-13700-SMxxx0.QSSI13.0
 vendor/bin/ims_rtp_daemon|514b4f3a8483c21526d98634aaf8f01e3a59328a
-vendor/bin/imsdatadaemon|41a10f6f2431a8b2acc29a539f6007aadf43ac26
+vendor/bin/imsdatadaemon;DISABLE_CHECKELF|41a10f6f2431a8b2acc29a539f6007aadf43ac26
 vendor/bin/imsqmidaemon|01cf9da152d3d816b1b2e8ac425cb6e5942bd6b7
 vendor/bin/imsrcsd|bf29aac14856f29268c01599e5f6c7c6ae520685
 vendor/etc/init/ims_rtp_daemon.rc|06510e936890f51aeb76f2cf3ed5dbe45e67ac20
