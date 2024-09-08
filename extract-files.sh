@@ -64,9 +64,13 @@ function blob_fixup() {
             [ "$2" = "" ] && return 0
             grep -q "libcrypto-v33.so" "${2}" || "${PATCHELF}" --replace-needed "libcrypto.so" "libcrypto-v33.so" "$2"
             ;;
-	    vendor/etc/seccomp_policy/atfwd@2.0.policy)
+	        vendor/etc/seccomp_policy/atfwd@2.0.policy)
             [ "$2" = "" ] && return 0
             grep -q "gettid: 1" "${2}" || echo "gettid: 1" >> "${2}"
+            ;;
+            vendor/etc/seccomp_policy/vendor.qti.hardware.dsp.policy)
+            [ "$2" = "" ] && return 0
+            grep -q "madvise: 1" "${2}" || echo -e "\nmadvise: 1" >> "${2}"
             ;;
             system_ext/lib/libwfdmmsrc_system.so)
             [ "$2" = "" ] && return 0

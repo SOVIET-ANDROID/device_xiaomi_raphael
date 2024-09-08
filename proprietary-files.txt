@@ -794,7 +794,7 @@ vendor/lib64/libqcodec2.so|ebcb7ae53c292d689b57450120e280c5797cfaa1
 vendor/bin/hw/vendor.dolby.hardware.dms@2.0-service
 vendor/etc/init/vendor.dolby.hardware.dms@2.0-service.rc
 vendor/etc/media_codecs_dolby_audio.xml
-vendor/etc/vintf/manifest/manifest_vendor.dolby.hardware.dms.xml
+vendor/etc/vintf/manifest/manifest_vendor.dolby.hardware.dms.xml;FIX_XML
 vendor/lib/libdapparamstorage.so
 vendor/lib/libdeccfg.so
 vendor/lib/libstagefright_soft_ac4dec.so
@@ -991,8 +991,8 @@ vendor/bin/qti|997f68edece7ef9bac7cef451924da29be3a52a2
 vendor/bin/rmt_storage|22958a937aa0011651fb7b5dbc3b65141b5facdb
 vendor/bin/ssgtzd|a93afdaba6f65433c4803efa323a3f3e9586d0b9
 vendor/bin/tftp_server|11ee89a3cc200f670a71fbd61c2aff67355571d6
-vendor/etc/data/dsi_config.xml|85f76668d6b6f87402c534f284c286676edefa93
-vendor/etc/data/netmgr_config.xml|f5d263abc394c1a770d7464b86c5b0c590523c9b
+vendor/etc/data/dsi_config.xml;FIX_XML|85f76668d6b6f87402c534f284c286676edefa93
+vendor/etc/data/netmgr_config.xml;FIX_XML|f5d263abc394c1a770d7464b86c5b0c590523c9b
 vendor/etc/init/dataadpl.rc|cd4907d9bfd438fe5f5c86f5d6cec590ac0bac2a
 vendor/etc/init/dataqti.rc|6abfd1a850d782adbbb6f42c9d8ca870036b2ad1
 vendor/etc/init/ipa_fws.rc|f1826b81077f51470c97781823f109f12361ac8b
