@@ -25,6 +25,28 @@ if [ ! -f "${HELPER}" ]; then
 fi
 source "${HELPER}"
 
+
+function vendor_imports() {
+    cat <<EOF >>"$1"
+	"device/xiaomi/raphael",
+	"device/qcom/common/vendor/media-legacy",
+	"vendor/qcom/common/vendor/media-legacy",
+        "hardware/google/interfaces",
+        "hardware/google/pixel",
+        "hardware/xiaomi",
+        "vendor/qcom/common/system/av",
+        "vendor/google/pixel",
+        "hardware/qcom-caf/sm8150",
+	"hardware/qcom-caf/sm8250",
+        "vendor/qcom/opensource/commonsys/display",
+        "vendor/qcom/opensource/commonsys-intf/display",
+        "vendor/qcom/opensource/display",
+        "vendor/qcom/opensource/data-ipa-cfg-mgr-legacy-um",
+        "vendor/qcom/opensource/dataservices",
+        "hardware/qcom-caf/wlan",
+EOF
+}
+
 # Initialize the helper
 setup_vendor "${DEVICE}" "${VENDOR}" "${ANDROID_ROOT}"
 
