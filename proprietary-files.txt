@@ -139,7 +139,7 @@ vendor/lib64/libbt-hidlclient.so
 vendor/lib64/libbtnv.so
 vendor/lib64/vendor.qti.hardware.bluetooth_sar@1.0.so
 vendor/lib64/vendor.qti.hardware.bluetooth_sar@1.1.so
-vendor/lib64/vendor.qti.hardware.fm@1.0.so
+vendor/lib64/vendor.qti.hardware.fm@1.0.so;MODULE=vendor.qti.hardware.fm@1.0_vendor
 
 # CDSP - from LA.UM.9.1.r1-13700-SMxxx0.QSSI13.0
 vendor/bin/cdsprpcd|530bcfcf9a31dedcc6c8ff5ea33fbaf8c03ab877
@@ -475,9 +475,9 @@ system_ext/lib64/vendor.qti.diaghal@1.0.so|339886a9895a29dfae15e8708d6eeacda1663
 # DPM (vendor) - from LA.UM.9.1.r1-13700-SMxxx0.QSSI13.0
 vendor/bin/dpmQmiMgr|e682a4c6e684be96de179158c65e5732f052ab2c
 vendor/etc/init/dpmQmiMgr.rc|1538743661a5c48c15cd105beaad20f72953885a
-vendor/lib/com.qualcomm.qti.dpm.api@1.0.so|8e97eba901841227ae7029f535a747fdefd6c369
+vendor/lib/com.qualcomm.qti.dpm.api@1.0.so;MODULE=com.qualcomm.qti.dpm.api@1.0_vendor|8e97eba901841227ae7029f535a747fdefd6c369
 vendor/lib/libdpmqmihal.so|843d7bd2dee10e67531deeedc8cbda480c71679f
-vendor/lib64/com.qualcomm.qti.dpm.api@1.0.so|d9f1aa7f93b928f42499d613d20ccbc60f279097
+vendor/lib64/com.qualcomm.qti.dpm.api@1.0.so;MODULE=com.qualcomm.qti.dpm.api@1.0_vendor|d9f1aa7f93b928f42499d613d20ccbc60f279097
 vendor/lib64/libdpmqmihal.so|41eb89e66ba065c43a5eb79cd3c72cef0ee167aa
 
 # DRM (Widevine L1)
@@ -958,7 +958,7 @@ vendor/lib64/vendor.qti.ims.rcsconfig@1.1.so|91521d031060612dbf53d4a6437eba56780
 vendor/lib64/vendor.qti.ims.rcsconfig@2.0.so|bd0db76d555c51971dcfcce62d981f987af32811
 vendor/lib64/vendor.qti.ims.rcsconfig@2.1.so|f52f0cd5e19455eba97dea61542217d4aa5c1841
 vendor/lib64/vendor.qti.imsrtpservice@3.0-service-Impl.so|4fc84ea2ec56396fa1d6daa9c8f06b227be403a4
-vendor/lib64/vendor.qti.imsrtpservice@3.0.so|460e589128fce0b0e83bb3c75aa32f7e1a9494fd
+vendor/lib64/vendor.qti.imsrtpservice@3.0.so;MODULE=vendor.qti.imsrtpservice@3.0_vendor|460e589128fce0b0e83bb3c75aa32f7e1a9494fd
 
 # Radio (system) - from LA.QSSI.12.0.r1-05800.02-qssi.0
 -system_ext/app/QtiTelephonyService/QtiTelephonyService.apk;NODEXPO|a32f88ddcc8f9cba18aa5697ee5bd52201e89b13
