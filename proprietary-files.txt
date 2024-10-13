@@ -501,7 +501,7 @@ vendor/lib/libcppf.so
 vendor/lib/libdrmfs.so
 vendor/lib/librmp.so
 vendor/lib/libtrustedapploader.so
-vendor/lib/mediadrm/libwvdrmengine.so
+vendor/lib/mediadrm/libwvdrmengine.so;DISABLE_CHECKELF
 vendor/lib64/hw/vendor.qti.hardware.qseecom@1.0-impl.so
 vendor/lib64/libGPreqcancel.so
 vendor/lib64/libGPreqcancel_svc.so
@@ -525,7 +525,7 @@ vendor/lib64/libssd.so
 vendor/lib64/libtrustedapploader.so
 vendor/lib64/libtzdrmgenprov.so
 vendor/lib64/libwvhidl.so
-vendor/lib64/mediadrm/libwvdrmengine.so
+vendor/lib64/mediadrm/libwvdrmengine.so;DISABLE_CHECKELF
 vendor/lib64/vendor.qti.hardware.qseecom@1.0.so
 
 # Display - from LA.UM.9.1.r1-13700-SMxxx0.QSSI13.0
@@ -911,7 +911,7 @@ vendor/lib64/vendor.qti.hardware.qteeconnector@1.0.so|4e08dcd830d319c1a56d108c03
 
 # Radio (IMS) (system) - from LA.QSSI.12.0.r1-05800.02-qssi.0
 -system_ext/priv-app/ims/ims.apk;NODEXPO|ed68ecd630ddbd49e88bd0b2e3b50ee35c334ef0
-system_ext/lib64/lib-imsvideocodec.so|ba0a0696b468ee2458c196b3d252656d20eb197f
+system_ext/lib64/lib-imsvideocodec.so;DISABLE_CHECKELF|ba0a0696b468ee2458c196b3d252656d20eb197f
 system_ext/lib64/lib-imsvt.so|f795cc87119b49587dbb1f3e4349fcf67b0610ed
 system_ext/lib64/lib-imsvtextutils.so|50a092eb7b490f4307bddb3d5a4c595b458bc503
 system_ext/lib64/lib-imsvtutils.so|9a7f904b12a066038c2b5725610e8dd45e3f75ed
