@@ -295,6 +295,7 @@ vendor/lib/libcamxfdengine.so
 vendor/lib/libcamxstatscore.so
 vendor/lib/libcamxswprocessalgo.so
 vendor/lib/libcamxtintlessalgo.so
+vendor/lib/libcamera_nn_stub.so
 vendor/lib64/camera/com.qti.sensor.imx586_raphael.so
 vendor/lib64/camera/com.qti.sensor.ov8856_raphael.so
 vendor/lib64/camera/com.qti.sensor.s5k3l6_raphael.so
@@ -1124,6 +1125,7 @@ vendor/etc/sensors/config/sns_tilt_to_wake.json
 vendor/etc/sensors/config/tcs3701.json
 vendor/etc/sensors/config/vl53l1_tof_0.json
 vendor/etc/sensors/sns_reg_config
+vendor/lib/libsnsapi.so
 vendor/lib64/libsensorcal.so
 vendor/lib64/libsensorslog.so
 vendor/lib64/libsns_device_mode_stub.so
