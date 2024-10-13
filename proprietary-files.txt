@@ -139,6 +139,7 @@ vendor/lib64/libbt-hidlclient.so
 vendor/lib64/libbtnv.so
 vendor/lib64/vendor.qti.hardware.bluetooth_sar@1.0.so
 vendor/lib64/vendor.qti.hardware.bluetooth_sar@1.1.so
+vendor/lib/vendor.qti.hardware.fm@1.0.so;MODULE=vendor.qti.hardware.fm@1.0_vendor
 vendor/lib64/vendor.qti.hardware.fm@1.0.so;MODULE=vendor.qti.hardware.fm@1.0_vendor
 
 # CDSP - from LA.UM.9.1.r1-13700-SMxxx0.QSSI13.0
@@ -189,6 +190,7 @@ vendor/etc/cne/wqeclient/VZW/VZW_profile5.xml|f76c894f3c6d5b6ed35113a088dc3174c9
 vendor/etc/cne/wqeclient/VZW/VZW_profile6.xml|14d136e7fcc682311757d3edc0b9d3eaeba11815
 vendor/etc/default-permissions/com.qualcomm.qti.cne.xml|c63c37d067e3009735fbc54d4603d43d7d6623e1
 vendor/etc/init/cnd.rc|3a5183df3479500fb729493bc56c71166fc10bce
+vendor/lib/libxml.so|e46a4dd57f543b0cbb897e5d861e987b9f0200bf
 vendor/lib64/libcne.so;DISABLE_CHECKELF|e14de8a25090dbf51b12ec5df580987ea2aa21a0
 vendor/lib64/libcneapiclient.so|0973dc05f6d6d9c469fc804693af79e6f3a5056a
 vendor/lib64/libcneoplookup.so|60d6abe85061de4fa75e5e4f69d477f37f1f8f64
@@ -569,6 +571,7 @@ vendor/bin/xtwifi-client|ba69c0eddc2b5b37e80a5590c937e91fc4baf559
 vendor/bin/xtwifi-inet-agent|2c7c1b9cedd02ba697043225feaca1ea97db9f0f
 vendor/etc/cacert_location.pem|0789bf799c7e45d352a83e2f79ddb0cea86db85b
 vendor/etc/xtra_root_cert.pem|f55a31ec4d9cf8ce2724acadecf00c779f8767db
+vendor/lib/libminksocket.so|7ede5ff3ad26dc8fe7f5ecd88f2c77b26dc6670e
 vendor/lib64/hw/vendor.qti.gnss@4.0-impl.so|fa12aa8cae5e0311c0d56c63b020c4a9485fbf3b
 vendor/lib64/libaoa.so|e38ab653612c7fb57a732c0ebadfbd0f9d174b8d
 vendor/lib64/libcacertclient.so|1d07e004c6660fcd7004deacb446c5e9fe67ce72
@@ -629,12 +632,12 @@ vendor/lib/libCB.so|6a3cdb29ae4a3bf199c826dd966e6bd7182a1883
 vendor/lib/libOpenCL.so|55d34f35f21e70aafb19c3bfb0edc715ef83c543
 vendor/lib/libOpenCL_adreno.so|b90752ae53d16c9e9cede2b38d4a8109b39217b8
 vendor/lib/libVkLayer_q3dtools.so|19d40e4c5c6104e889acfff640ed9b68b02a8032
-vendor/lib/libadreno_app_profiles.so|991a98bef1a4e7e47d5120c2bf0080e1cc78388b
+vendor/lib/libadreno_app_profiles.so;DISABLE_DEPS|991a98bef1a4e7e47d5120c2bf0080e1cc78388b
 vendor/lib/libadreno_utils.so|f8cd5fe4ccf77b211ad379aee5bbf401788f1880
 vendor/lib/libc2d30_bltlib.so|fc078600251e05be3cb029986a5c1f05e8b088ab
 vendor/lib/libdmabufheap.so|d304941d227229e8909feca4628b26e10bc5bba9
 vendor/lib/libgpudataproducer.so|84eb0a73b58c856fa0a73494e14f2a5d6c9dd7cc
-vendor/lib/libgsl.so|8cd4a75089de8970fbf3a4661c4d0e8e64535ed0
+vendor/lib/libgsl.so|f11778a1870dfbb1c5b6bdd202d938dd0d4ec79b
 vendor/lib/libkcl.so|a504b8d00e87070f7b39a390b5199e971ab3f3e4
 vendor/lib/libkernelmanager.so|9314f26594fbca2c3993b8c91252bffcacb0592b
 vendor/lib/libllvm-glnext.so|b65ee37ba2fb63700ea38dbe39731bf1e51459b2
@@ -653,7 +656,7 @@ vendor/lib64/libCB.so|1e1f68f4e954617b8879ca980367ef53e82864a3
 vendor/lib64/libOpenCL.so|98fe18af9ed6b4c366f0d0ca17c707afca57f3a8
 vendor/lib64/libOpenCL_adreno.so|2b1dae0e6b8a8cec153a4b68683c6c3b0da3ce54
 vendor/lib64/libVkLayer_q3dtools.so|0013a3267134a2a7a4005680e8f6c2dbcafaa898
-vendor/lib64/libadreno_app_profiles.so|21ee01d6eaeb74892efc66984bffa7dfe9d198b9
+vendor/lib64/libadreno_app_profiles.so;DISABLE_DEPS|21ee01d6eaeb74892efc66984bffa7dfe9d198b9
 vendor/lib64/libadreno_utils.so|fbac8ba895413d3a9ded32226b0f494d33aad6f0
 vendor/lib64/libc2d30_bltlib.so|cbd2c5b449d568f36ef13cd9fa6774e07db4265b
 vendor/lib64/libdmabufheap.so|244ac286715bd179b8a053022d71dda8bef850d5
@@ -827,6 +830,7 @@ vendor/lib64/unnhal-acc-hvx.so|d5123c50b9523190c71d90acc2635ff21595bd1a
 # Peripheral manager - from LA.UM.9.1.r1-13700-SMxxx0.QSSI13.0
 vendor/bin/pm-proxy|c36785c811db9af0d6d938cdbc6b90dedaaf706e
 vendor/bin/pm-service|c3d1b2f6e7f731b1328afbcf8e344405744528e3
+vendor/lib/libspcom.so|3e1b92390ebcb02d35fcda89f80d1cfef3a03a71
 vendor/lib64/libperipheral_client.so|9bfd41e276e16b8f7c6808f3d87531fc5be4cdd5
 vendor/lib64/libspcom.so|7cc4390e7caf520586c22cdb7219842fa5d6ed2c
 
@@ -852,6 +856,7 @@ vendor/lib/libidl.so|f91eebf917150514da6c111de6c66805bed3f6c8
 vendor/lib/libmdmdetect.so|0105abde3eead7e5292d1c0823327f0969751e88
 vendor/lib/libminkdescriptor.so|c070295572b0c6d38d5b218fa7a8600abdaee218
 vendor/lib/libpdmapper.so|cd2ed6f056d24fc596f3a7c015db2ed95049bfcb
+vendor/lib/libqmi_legacy.so|7805ed3a940405d88d4b7dd29516c68ee19c5b08
 vendor/lib/libqcci_legacy.so|be14a3ba29cf4dc9fce1f7a51fb02cb775b16f1c
 vendor/lib/libqcmaputils.so|83f90454b4720b8e394be4c12d9e0d64a7086741
 vendor/lib/libqdi.so|a7e8f8c2bbfcbb3822440e4d3fdd0d5757151ad4
@@ -872,6 +877,7 @@ vendor/lib64/libdsi_netctrl.so|5ab177b8e5d36650fe32d426851b04e46f4ed3b0
 vendor/lib64/libdsutils.so|3d5c79c01c20251afab22cba199d1e4bf2996590
 vendor/lib64/libidl.so|857f7a75a51ade7d3621f7fa6da0e9461244ca01
 vendor/lib64/libminkdescriptor.so|3fb52e7d3c9c213df62881a7068baab82cbbd78e
+vendor/lib64/libqmi_legacy.so|f324c6701ecf78ff50975c0bc7f99aea09cb3539
 vendor/lib64/libqcci_legacy.so|0e78c75ce59453a09cc1d6bcba0507cab9ae663a
 vendor/lib64/libqcmaputils.so|8cab69896198945d2faf51955e39acf9d71bf796
 vendor/lib64/libqdi.so|e029f0871cf70c35392233b3029b2d22dd6d4560
@@ -997,6 +1003,9 @@ vendor/etc/init/vendor.qti.tftp.rc|b27f188cbffba470a4510d50e46ff7c8446c22cb
 vendor/etc/seccomp_policy/atfwd@2.0.policy|da0ecc6378a5df652f412c4aac8423e50f27a53e
 vendor/etc/ssg/ta_config.json|e18554b038da3737b7352d1271e5fde9c789c9df
 vendor/etc/ssg/tz_whitelist.json|c0dc4f4cfee20db5993eb5142e362cba7dfaecd6
+vendor/lib/libnetmgr.so|3283f9180ab524ccb9bf6f36890c680bfb48fd3c
+vendor/lib/libconfigdb.so|082bcb0b6f1d86dc65f6e05fb59420d555131c1a
+vendor/lib/libqcbor.so|e6907a4f9da62793c7e821fc5388c76c48f8774f
 vendor/lib64/deviceInfoServiceModule.so|d9fb334e23fc38ac9b105af43b76c7f796f3d02a
 vendor/lib64/libconfigdb.so|92884af781e10586e90319b4b2155db4f27b0215
 vendor/lib64/liblqe.so|a9c9cc6539482655a5ef1c612050e7cd961c2fd3
