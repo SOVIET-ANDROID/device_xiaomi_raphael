@@ -798,7 +798,7 @@ vendor/lib64/libmlipay.so
 vendor/lib64/libmlipay@1.1.so
 
 # NFC Firmware
-vendor/lib/libsn100u_fw.so
+vendor/lib/libsn100u_fw.so:vendor/lib64/libsn100u_fw.so
 
 # Neural Networks - from LA.UM.9.1.r1-13700-SMxxx0.QSSI13.0
 vendor/bin/hw/android.hardware.neuralnetworks@1.3-service-qti|d8f5981b1bedaa9cbef1b9fc93a400dc98e89cfa
