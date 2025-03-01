@@ -38,4 +38,6 @@
         <ctl name="HPHR Volume" value="20" />
     </path>
 
+    <path name="hph-highquality-mode">
+    </path>
 </mixer>
