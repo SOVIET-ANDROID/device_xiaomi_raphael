@@ -791,22 +791,22 @@ vendor/lib/libqcodec2.so|c5673b5f377fc855f1467ea2b3c3ed47ca68bbfb
 vendor/lib64/libqcodec2.so|ebcb7ae53c292d689b57450120e280c5797cfaa1
 
 # Media (Dolby)
-vendor/bin/hw/vendor.dolby.hardware.dms@2.0-service
-vendor/etc/init/vendor.dolby.hardware.dms@2.0-service.rc
-vendor/etc/media_codecs_dolby_audio.xml
-vendor/etc/vintf/manifest/manifest_vendor.dolby.hardware.dms.xml;FIX_XML
-vendor/lib/libdapparamstorage.so
-vendor/lib/libdeccfg.so
-vendor/lib/libstagefright_soft_ac4dec.so
-vendor/lib/libstagefright_soft_ddpdec.so
+vendor/etc/init/vendor.dolby.hardware.dms@2.0-service.rc|29296ebfe89b2697fec573be73cc3757fd97bed6
+vendor/etc/media_codecs_dolby_audio.xml|a794eb15fc198d0285510260025cd99b53fa174f
+vendor/bin/hw/vendor.dolby.hardware.dms@2.0-service|8135f86a958b701617f1c33f2b5b54b2958aa0db
+vendor/etc/vintf/manifest/manifest_vendor.dolby.hardware.dms.xml;FIX_XML|c8095f649de19b80271fb429b4b6b439297a0678
+vendor/lib/libdapparamstorage.so|1f95652cfc889b66a0eb6bc3d71f647851f41c3d
+vendor/lib/libdeccfg.so|7fced6479c0f12d7585b43c9550fdb14e1a3578c
+vendor/lib/libstagefright_soft_ac4dec.so|dfe44b5c576e9bf29e21c0ee8c8519ff3ed92ffd
+vendor/lib/libstagefright_soft_ddpdec.so|b8d55a6362b691b8c1c585ea9ef11f23c653878a
 vendor/lib/soundfx/libswdap.so|810d0e266e4a77f06cba72fe8bdde2e1ede4f9f9
-vendor/lib/soundfx/libswgamedap.so
-vendor/lib/soundfx/libswvqe.so
-vendor/lib/vendor.dolby.hardware.dms@2.0.so
-vendor/lib64/libdapparamstorage.so
-vendor/lib64/libdlbdsservice.so
-vendor/lib64/vendor.dolby.hardware.dms@2.0-impl.so
-vendor/lib64/vendor.dolby.hardware.dms@2.0.so
+vendor/lib/soundfx/libswgamedap.so|aa7fc2b58c2fdd90d54f38066ce22b0c3df61c5f
+vendor/lib/soundfx/libswvqe.so|53071c6436a3847a539b2bb1afb301cdf068bb7a
+vendor/lib/vendor.dolby.hardware.dms@2.0.so|da5277dbeded94c17cf2cbc0f3412b3fcd475f58
+vendor/lib64/libdapparamstorage.so|85e56a8415e0bd4033fa6b770f8dac580d6983de
+vendor/lib64/libdlbdsservice.so|790f19c8e1ac1d5390ffec4745d0585d84fd3350
+vendor/lib64/vendor.dolby.hardware.dms@2.0-impl.so|837272d231c9a2de863653c486acf8aee1c04d30
+vendor/lib64/vendor.dolby.hardware.dms@2.0.so|0ca0f1a99ea973b4977a60a8a94b8ddd03635531
 
 # Mlipay
 vendor/bin/mlipayd@1.1
