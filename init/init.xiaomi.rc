@@ -131,13 +131,12 @@ service nv_mac /vendor/bin/nv_mac
     oneshot
 
 # NFC
-service vendor.nfc_hal_service /vendor/bin/hw/android.hardware.nfc@1.2-service
+service vendor.nfc_hal_service /vendor/bin/hw/android.hardware.nfc-service.nxp
     override
-    class hal
+    class early_hal
     user nfc
-    group nfc
-    task_profiles ServiceCapacityLow
+    group nfc drmrpc system
     disabled
 
-on boot && property:ro.boot.product.hardware.sku=nfc
+on property:ro.boot.product.hardware.sku=nfc
     enable vendor.nfc_hal_service
