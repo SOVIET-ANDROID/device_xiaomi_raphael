@@ -160,7 +160,8 @@ PRODUCT_PACKAGES += \
     liba2dpoffload \
     libhdmiedid \
     libhfp \
-    tinymix
+    tinymix \
+    sound_trigger.primary.msmnile
 
 # Audio configs
 PRODUCT_COPY_FILES += \
