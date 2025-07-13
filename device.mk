@@ -135,6 +135,7 @@ PRODUCT_PACKAGES += \
     audio.primary.default \
     audio.r_submix.default \
     audio.usb.default \
+    audio_amplifier.msmnile \
     libaudioroute.vendor \
     libaudiopreprocessing \
     libbatterylistener \
