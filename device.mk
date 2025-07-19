@@ -130,6 +130,7 @@ PRODUCT_PACKAGES += \
     android.hardware.audio.sounddose-vendor-impl \
     android.hardware.bluetooth.audio@2.1-impl \
     android.hardware.soundtrigger@2.2-impl \
+    audio.primary.msmnile \
     audio.bluetooth.default \
     audio.primary.default \
     audio.r_submix.default \
@@ -155,6 +156,9 @@ PRODUCT_PACKAGES += \
     libtinycompress \
     libvisualizer \
     libvolumelistener \
+    liba2dpoffload \
+    libhdmiedid \
+    libhfp \
     tinymix
 
 # Audio configs
