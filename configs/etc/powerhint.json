@@ -538,12 +538,35 @@
       "Value": "2c"
     },
     {
-      "PowerHint": "Flipendo",
-      "Node": "CPULittleClusterMaxFreq",
-      "Duration": 0,
-      "Value": "1708800"
+      "PowerHint": "GAME_LOADING",
+      "Type": "DoHint",
+      "Value": "LAUNCH"
     },
-{
+    {
+      "PowerHint": "GAME",
+      "Node": "TAUClampLatency",
+      "Duration": 0,
+      "Value": "1"
+    },
+    {
+      "PowerHint": "GAME",
+      "Node": "TAUClampBoost",
+      "Duration": 0,
+      "Value": "30"
+    },
+    {
+      "PowerHint": "GAME",
+      "Node": "CPUBigClusterMaxFreq",
+      "Duration": 0,
+      "Value": "2016000"
+    },
+    {
+      "PowerHint": "GAME",
+      "Node": "CPUBigPlusClusterMaxFreq",
+      "Duration": 0,
+      "Value": "2419200"
+    },
+    {
       "PowerHint": "LOW_POWER",
       "Node": "TAUClampLatency",
       "Duration": 0,
