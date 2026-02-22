@@ -176,21 +176,6 @@
             "Monitor":true
         },
         {
-            "Name":"npu-usr",
-            "Type":"NPU",
-            "HotThreshold":[
-                "NAN",
-                "NAN",
-                "NAN",
-                "NAN",
-                "NAN",
-                "NAN",
-                "NAN"
-            ],
-            "VrThreshold":"NAN",
-            "Multiplier":0.001
-        },
-        {
             "Name":"sdm-therm-monitor",
             "Type":"SKIN",
             "HotThreshold":[
@@ -233,10 +218,6 @@
         }
     ],
     "CoolingDevices":[
-        {
-            "Name":"npu",
-            "Type":"NPU"
-        },
         {
             "Name":"battery",
             "Type":"BATTERY"
