@@ -186,7 +186,7 @@ on boot
     write /dev/cpuset/system-background/cpus 0-2
     write /dev/cpuset/top-app/cpus 0-7
 
-#USB controller configuration
+    # USB controller configuration
     setprop vendor.usb.rndis.func.name "gsi"
     setprop vendor.usb.rmnet.func.name "gsi"
     setprop vendor.usb.rmnet.inst.name "rmnet"
@@ -198,7 +198,6 @@ on boot && property:persist.vendor.usb.controller.default=*
     setprop vendor.usb.controller ${persist.vendor.usb.controller.default}
 
 on property:sys.boot_completed=1
-
     # Setup final cpu.uclamp.min
     write /dev/cpuctl/top-app/cpu.uclamp.min 0
     write /dev/cpuctl/foreground/cpu.uclamp.min 10
@@ -311,10 +310,10 @@ service vendor.thermal-engine /vendor/bin/thermal-engine -c /vendor/etc/thermal-
     socket thermal-send-rule stream 0660 system system
 
 service vendor.lowi /vendor/bin/sscrpcd
-   class core
-   user system
-   group system wakelock
-   capabilities BLOCK_SUSPEND
+    class core
+    user system
+    group system wakelock
+    capabilities BLOCK_SUSPEND
 
 service vendor.energy-awareness /vendor/bin/energy-awareness
     class main

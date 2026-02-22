@@ -34,12 +34,12 @@ import /vendor/etc/init/hw/init.xiaomi.rc
 import /vendor/etc/init/hw/init.power.rc
 
 on early-init
-  # create symlink for vendor mount points
+    # create symlink for vendor mount points
     symlink /vendor/firmware_mnt /firmware
     symlink /vendor/bt_firmware /bt_firmware
     symlink /vendor/dsp /dsp
 
-  # Change ownership of sysfs power control node
+    # Change ownership of sysfs power control node
     chown system graphics /sys/class/drm/card0/device/power/control
 
     #Disable UFS clock scaling
@@ -62,14 +62,8 @@ on early-init
     write /sys/bus/msm_subsys/devices/subsys4/restart_level RELATED
     write /sys/bus/msm_subsys/devices/subsys5/restart_level RELATED
     write /sys/bus/msm_subsys/devices/subsys6/restart_level RELATED
-
-on init
-    # Create cgroup mount point for memory
-    mkdir /sys/fs/cgroup/memory/bg 0750 root system
-    write /sys/fs/cgroup/memory/bg/memory.swappiness 140
-    write /sys/fs/cgroup/memory/bg/memory.move_charge_at_immigrate 1
-    chown root system /sys/fs/cgroup/memory/bg/tasks
-    chmod 0660 /sys/fs/cgroup/memory/bg/tasks
+    write /sys/bus/msm_subsys/devices/subsys7/restart_level RELATED
+    write /sys/bus/msm_subsys/devices/subsys8/restart_level RELATED
 
 on early-boot
     # set RLIMIT_MEMLOCK to 64MB
@@ -134,7 +128,7 @@ on boot
     mkdir /persist/drm 0770 system system
     mkdir /persist/bluetooth 0770 bluetooth bluetooth
     mkdir /persist/misc 0770 system system
-    mkdir /persist/alarm 0770 system system
+    mkdir /persist/alarm 0770 system alarm
     mkdir /mnt/vendor/persist/time 0770 system system
     mkdir /mnt/vendor/persist/secnvm 0770 system system
     mkdir /mnt/vendor/persist/iar_db 0770 system system
@@ -144,7 +138,6 @@ on boot
 
     #Remove SUID bit for iproute2 ip tool
     chmod 0755 /system/bin/ip
-
 
     chmod 0444 /sys/devices/platform/msm_hsusb/gadget/usb_state
 
@@ -261,7 +254,6 @@ on post-fs-data
 
     #Create folder of camera
     mkdir /data/vendor/camera 0770 camera camera
-
 
     #Create directory for tftp
     mkdir /data/vendor/tombstones 0771 system system
@@ -431,7 +423,7 @@ on property:sys.boot_completed=1
     setprop lmkd.reinit 1
     setprop vendor.setup.power 1
 
-    # Restrict permissions to socket file 
+    # Restrict permissions to socket file
     # to hide Magisk & co.
     chmod 440 /proc/net/unix
 
@@ -531,10 +523,10 @@ service wifi-sdio-on /vendor/bin/init.qcom.sdio.sh
     oneshot
 
 service wifi-crda /vendor/bin/init.crda.sh
-   class late_start
-   user root
-   disabled
-   oneshot
+    class late_start
+    user root
+    disabled
+    oneshot
 
 on property:ro.vendor.ril.mbn_copy_completed=1
     write /data/vendor/radio/copy_complete 1
@@ -625,6 +617,7 @@ service esepmdaemon /system/vendor/bin/esepmdaemon
     user system
     group nfc
 
+# Charger mode: keep one LITTLE (cpu0) and one BIG (cpu4), disable the rest
 on property:init.svc.vendor.charger=running
     setprop persist.sys.usb.config mass_storage
     setprop vendor.setup.power 1
@@ -632,20 +625,11 @@ on property:init.svc.vendor.charger=running
     write /sys/devices/system/cpu/cpu1/online 0
     write /sys/devices/system/cpu/cpu2/online 0
     write /sys/devices/system/cpu/cpu3/online 0
-    write /sys/devices/system/cpu/cpu4/online 0
-    write /sys/devices/system/cpu/cpu5/online 0
-    write /sys/devices/system/cpu/cpu7/online 0
-
-on property:init.svc.vendor.charger=running
-    # Keep one LITTLE and one BIG
-    write /sys/devices/system/cpu/cpu1/online 0
-    write /sys/devices/system/cpu/cpu2/online 0
-    write /sys/devices/system/cpu/cpu3/online 0
     write /sys/devices/system/cpu/cpu5/online 0
     write /sys/devices/system/cpu/cpu6/online 0
     write /sys/devices/system/cpu/cpu7/online 0
 
-    # Enable thermal mitigation
+    # Enable thermal mitigation in charger mode
     write /sys/devices/virtual/thermal/tz-by-name/backup-charge/mode enabled
 
 #add poweroffhandler
