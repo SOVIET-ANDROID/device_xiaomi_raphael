@@ -45,20 +45,6 @@ on property:vendor.setup.power=1
     write /sys/devices/platform/soc/soc:qcom,cpu-llcc-ddr-bw/devfreq/soc:qcom,cpu-llcc-ddr-bw/bw_hwmon/idle_mbps 1600
     write /sys/devices/platform/soc/soc:qcom,cpu-llcc-ddr-bw/devfreq/soc:qcom,cpu-llcc-ddr-bw/max_freq 6881
 
-    write /sys/devices/virtual/npu/msm_npu/pwr 1
-    write /sys/devices/platform/soc/soc:qcom,npu-npu-ddr-bw/devfreq/soc:qcom,npu-npu-ddr-bw/governor bw_hwmon
-    write /sys/devices/platform/soc/soc:qcom,npu-npu-ddr-bw/devfreq/soc:qcom,npu-npu-ddr-bw/polling_interval 40
-    write /sys/devices/platform/soc/soc:qcom,npu-npu-ddr-bw/devfreq/soc:qcom,npu-npu-ddr-bw/bw_hwmon/mbps_zones "1720 2929 3879 5931 6881 7980"
-    write /sys/devices/platform/soc/soc:qcom,npu-npu-ddr-bw/devfreq/soc:qcom,npu-npu-ddr-bw/bw_hwmon/sample_ms 4
-    write /sys/devices/platform/soc/soc:qcom,npu-npu-ddr-bw/devfreq/soc:qcom,npu-npu-ddr-bw/bw_hwmon/io_percent 80
-    write /sys/devices/platform/soc/soc:qcom,npu-npu-ddr-bw/devfreq/soc:qcom,npu-npu-ddr-bw/bw_hwmon/hist_memory 20
-    write /sys/devices/platform/soc/soc:qcom,npu-npu-ddr-bw/devfreq/soc:qcom,npu-npu-ddr-bw/bw_hwmon/hyst_length 6
-    write /sys/devices/platform/soc/soc:qcom,npu-npu-ddr-bw/devfreq/soc:qcom,npu-npu-ddr-bw/bw_hwmon/down_thres 30
-    write /sys/devices/platform/soc/soc:qcom,npu-npu-ddr-bw/devfreq/soc:qcom,npu-npu-ddr-bw/bw_hwmon/guard_band_mbps 0
-    write /sys/devices/platform/soc/soc:qcom,npu-npu-ddr-bw/devfreq/soc:qcom,npu-npu-ddr-bw/bw_hwmon/up_scale 250
-    write /sys/devices/platform/soc/soc:qcom,npu-npu-ddr-bw/devfreq/soc:qcom,npu-npu-ddr-bw/bw_hwmon/idle_mbps 0
-    write /sys/devices/virtual/npu/msm_npu/pwr 0
-
     # Enable mem_latency governor for L3, LLCC, and DDR scaling
     write /sys/devices/platform/soc/soc:qcom,cpu0-cpu-llcc-lat/devfreq/soc:qcom,cpu0-cpu-llcc-lat/governor mem_latency
     write /sys/devices/platform/soc/soc:qcom,cpu0-cpu-llcc-lat/devfreq/soc:qcom,cpu0-cpu-llcc-lat/polling_interval 8
@@ -112,27 +98,41 @@ on property:vendor.setup.power=1
     # Enable PowerHAL hint processing
     setprop vendor.powerhal.init 1
 
-    # IRQ Tuning
-    # IRQ 8: msm_drm
-    # IRQ 506: kgsl-3d0
+    # IRQ Tuning - verified IRQ numbers from /proc/interrupts on raphael:
+    # IRQ 8:   msm_drm  (PDC-GIC 115)
+    # IRQ 506: kgsl-3d0 (PDC-GIC 332)
     write /proc/irq/8/smp_affinity_list 2
     write /proc/irq/506/smp_affinity_list 1
 
 on boot
-# Enable suspend to idle mode to reduce latency during suspend/resume
+    # Enable suspend to idle mode to reduce latency during suspend/resume
     write /sys/power/mem_sleep "s2idle"
 
 # Thermal HAL needed
 on enable-thermal-hal
-
-    # Permission
+    # Permission for battery cooling device
     chown root system /dev/thermal/cdev-by-name/battery/cur_state
     chmod 660 /dev/thermal/cdev-by-name/battery/cur_state
 
-    # Enable State of Charge (SOC)
+    # Enable State of Charge (SOC) thermal zone
     write /dev/thermal/tz-by-name/soc/mode "enabled"
 
 on charger
     start vendor.thermal.symlinks
     start vendor.thermal-engine
     trigger enable-thermal-hal
+
+# NPU devfreq configuration - triggered after NPU is confirmed powered on
+# to avoid the async power-up race condition
+on property:vendor.npu.boot=1
+    write /sys/devices/platform/soc/soc:qcom,npu-npu-ddr-bw/devfreq/soc:qcom,npu-npu-ddr-bw/governor bw_hwmon
+    write /sys/devices/platform/soc/soc:qcom,npu-npu-ddr-bw/devfreq/soc:qcom,npu-npu-ddr-bw/polling_interval 40
+    write /sys/devices/platform/soc/soc:qcom,npu-npu-ddr-bw/devfreq/soc:qcom,npu-npu-ddr-bw/bw_hwmon/mbps_zones "1720 2929 3879 5931 6881 7980"
+    write /sys/devices/platform/soc/soc:qcom,npu-npu-ddr-bw/devfreq/soc:qcom,npu-npu-ddr-bw/bw_hwmon/sample_ms 4
+    write /sys/devices/platform/soc/soc:qcom,npu-npu-ddr-bw/devfreq/soc:qcom,npu-npu-ddr-bw/bw_hwmon/io_percent 80
+    write /sys/devices/platform/soc/soc:qcom,npu-npu-ddr-bw/devfreq/soc:qcom,npu-npu-ddr-bw/bw_hwmon/hist_memory 20
+    write /sys/devices/platform/soc/soc:qcom,npu-npu-ddr-bw/devfreq/soc:qcom,npu-npu-ddr-bw/bw_hwmon/hyst_length 6
+    write /sys/devices/platform/soc/soc:qcom,npu-npu-ddr-bw/devfreq/soc:qcom,npu-npu-ddr-bw/bw_hwmon/down_thres 30
+    write /sys/devices/platform/soc/soc:qcom,npu-npu-ddr-bw/devfreq/soc:qcom,npu-npu-ddr-bw/bw_hwmon/guard_band_mbps 0
+    write /sys/devices/platform/soc/soc:qcom,npu-npu-ddr-bw/devfreq/soc:qcom,npu-npu-ddr-bw/bw_hwmon/up_scale 250
+    write /sys/devices/platform/soc/soc:qcom,npu-npu-ddr-bw/devfreq/soc:qcom,npu-npu-ddr-bw/bw_hwmon/idle_mbps 0
