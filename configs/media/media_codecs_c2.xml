@@ -86,6 +86,10 @@
  |__________|_____________________________________________________|
 -->
 <Included>
+    <Settings>
+        <Setting name="max-video-encoder-input-buffers" value="11" />
+        <Domain name="telephony" enabled="true" />
+    </Settings>
     <Decoders>
         <MediaCodec name="c2.qti.avc.decoder" type="video/avc">
             <Alias name="OMX.qcom.video.decoder.avc" />
