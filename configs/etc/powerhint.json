@@ -50,7 +50,7 @@
         "2419200",
         "1497600",
         "1401600",
-        "0",
+        "710400",
         "1286400"
       ],
       "DefaultIndex": 3,
@@ -65,7 +65,7 @@
         "1804800",
         "1401600",
         "1708800",
-        "2015999",
+        "2016000",
         "2227200",
         "2534400"
       ],
@@ -79,7 +79,7 @@
         "2841600",
         "1497600",
         "1401600",
-        "0",
+        "825600",
         "1286400"
       ],
       "DefaultIndex": 3,
@@ -141,7 +141,9 @@
       "Values": [
         "0",
         "1",
-        "2"
+        "3",
+        "4",
+        "5"
       ],
       "DefaultIndex": 0,
       "ResetOnInit": true
@@ -156,7 +158,7 @@
         "4",
         "5"
       ],
-      "DefaultIndex": 4,
+      "DefaultIndex": 5,
       "ResetOnInit": true
     },
     {
@@ -277,7 +279,7 @@
       "Values": [
         "1",
         "0"
-      ]
+      ],
       "DefaultIndex": 1,
       "ResetOnInit": true
     },
@@ -485,11 +487,6 @@
       "Value": "2c"
     },
     {
-      "PowerHint": "LAUNCH",
-      "Type": "DoHint",
-      "Value": "LAUNCH_EXTEND"
-    },
-    {
       "PowerHint": "AUDIO_STREAMING_LOW_LATENCY",
       "Node": "PowerHALAudioState",
       "Duration": 0,
@@ -516,6 +513,84 @@
     {
       "PowerHint": "EXPENSIVE_RENDERING",
       "Node": "GPUMaxFreq",
+      "Duration": 0,
+      "Value": "0"
+    },
+{
+      "PowerHint": "DISPLAY_INACTIVE",
+      "Node": "CPUBigPlusClusterMaxFreq",
+      "Duration": 0,
+      "Value": "1401600"
+    },
+    {
+      "PowerHint": "DISPLAY_INACTIVE",
+      "Node": "CPUBigClusterMaxFreq",
+      "Duration": 0,
+      "Value": "1171200"
+    },
+    {
+      "PowerHint": "DISPLAY_INACTIVE",
+      "Node": "CPULittleClusterMaxFreq",
+      "Duration": 0,
+      "Value": "1036800"
+    },
+    {
+      "PowerHint": "DEVICE_IDLE",
+      "Node": "CPUBigPlusClusterMaxFreq",
+      "Duration": 0,
+      "Value": "1171200"
+    },
+    {
+      "PowerHint": "DEVICE_IDLE",
+      "Node": "CPUBigClusterMaxFreq",
+      "Duration": 0,
+      "Value": "1171200"
+    },
+    {
+      "PowerHint": "DEVICE_IDLE",
+      "Node": "CPULittleClusterMaxFreq",
+      "Duration": 0,
+      "Value": "1113600"
+    },
+    {
+      "PowerHint": "DEVICE_IDLE",
+      "Node": "GPUMaxFreq",
+      "Duration": 0,
+      "Value": "5"
+    },
+    {
+      "PowerHint": "DEVICE_IDLE",
+      "Node": "TAUClampLatency",
+      "Duration": 0,
+      "Value": "0"
+    },
+    {
+      "PowerHint": "VIDEO_DECODE",
+      "Node": "CPUBigPlusClusterMaxFreq",
+      "Duration": 0,
+      "Value": "1171200"
+    },
+    {
+      "PowerHint": "VIDEO_DECODE",
+      "Node": "CPUBigClusterMaxFreq",
+      "Duration": 0,
+      "Value": "1171200"
+    },
+    {
+      "PowerHint": "VIDEO_DECODE",
+      "Node": "CPULittleClusterMaxFreq",
+      "Duration": 0,
+      "Value": "1248000"
+    },
+    {
+      "PowerHint": "VIDEO_DECODE",
+      "Node": "GPUMaxFreq",
+      "Duration": 0,
+      "Value": "4"
+    },
+    {
+      "PowerHint": "VIDEO_DECODE",
+      "Node": "TAUClampLatency",
       "Duration": 0,
       "Value": "0"
     },
@@ -566,6 +641,12 @@
       "Duration": 0,
       "Value": "2419200"
     },
+{
+      "PowerHint": "GAME",
+      "Node": "GPUMinFreq",
+      "Duration": 0,
+      "Value": "3"
+    },
     {
       "PowerHint": "LOW_POWER",
       "Node": "TAUClampLatency",
@@ -600,7 +681,7 @@
       "PowerHint": "LOW_POWER",
       "Node": "GPUMaxFreq",
       "Duration": 0,
-      "Value": "5"
+      "Value": "4"
     }
   ]
 }
