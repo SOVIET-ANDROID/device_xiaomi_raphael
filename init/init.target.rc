@@ -87,6 +87,39 @@ on late-init
     chown system system /sys/devices/virtual/thermal/tz-by-name/usbc-therm-monitor/trip_point_0_hyst
     chown system system /sys/devices/virtual/thermal/tz-by-name/soc/mode
 
+on boot
+# Permission fixes for PowerHAL (libperfmgr)
+    chown system system /sys/class/devfreq/soc:qcom,cpu-cpu-llcc-bw/min_freq
+    chmod 0664 /sys/class/devfreq/soc:qcom,cpu-cpu-llcc-bw/min_freq
+    chown system system /sys/class/devfreq/soc:qcom,cpu-cpu-llcc-bw/bw_hwmon/hyst_trigger_count
+    chmod 0664 /sys/class/devfreq/soc:qcom,cpu-cpu-llcc-bw/bw_hwmon/hyst_trigger_count
+    chown system system /sys/class/devfreq/soc:qcom,cpu-cpu-llcc-bw/bw_hwmon/hist_memory
+    chmod 0664 /sys/class/devfreq/soc:qcom,cpu-cpu-llcc-bw/bw_hwmon/hist_memory
+    chown system system /sys/class/devfreq/soc:qcom,cpu-cpu-llcc-bw/bw_hwmon/hyst_length
+    chmod 0664 /sys/class/devfreq/soc:qcom,cpu-cpu-llcc-bw/bw_hwmon/hyst_length
+    chown system system /sys/class/devfreq/soc:qcom,cpu-cpu-llcc-bw/bw_hwmon/sample_ms
+    chmod 0664 /sys/class/devfreq/soc:qcom,cpu-cpu-llcc-bw/bw_hwmon/sample_ms
+    chown system system /sys/class/devfreq/soc:qcom,cpu-cpu-llcc-bw/bw_hwmon/io_percent
+    chmod 0664 /sys/class/devfreq/soc:qcom,cpu-cpu-llcc-bw/bw_hwmon/io_percent
+
+    chown system system /sys/class/devfreq/soc:qcom,cpu-llcc-ddr-bw/min_freq
+    chmod 0664 /sys/class/devfreq/soc:qcom,cpu-llcc-ddr-bw/min_freq
+    chown system system /sys/class/devfreq/soc:qcom,cpu-llcc-ddr-bw/bw_hwmon/hyst_trigger_count
+    chmod 0664 /sys/class/devfreq/soc:qcom,cpu-llcc-ddr-bw/bw_hwmon/hyst_trigger_count
+    chown system system /sys/class/devfreq/soc:qcom,cpu-llcc-ddr-bw/bw_hwmon/hist_memory
+    chmod 0664 /sys/class/devfreq/soc:qcom,cpu-llcc-ddr-bw/bw_hwmon/hist_memory
+    chown system system /sys/class/devfreq/soc:qcom,cpu-llcc-ddr-bw/bw_hwmon/hyst_length
+    chmod 0664 /sys/class/devfreq/soc:qcom,cpu-llcc-ddr-bw/bw_hwmon/hyst_length
+    chown system system /sys/class/devfreq/soc:qcom,cpu-llcc-ddr-bw/bw_hwmon/sample_ms
+    chmod 0664 /sys/class/devfreq/soc:qcom,cpu-llcc-ddr-bw/bw_hwmon/sample_ms
+
+    chown system system /sys/class/kgsl/kgsl-3d0/max_pwrlevel
+    chmod 0664 /sys/class/kgsl/kgsl-3d0/max_pwrlevel
+    chown system system /sys/class/kgsl/kgsl-3d0/min_pwrlevel
+    chmod 0664 /sys/class/kgsl/kgsl-3d0/min_pwrlevel
+    chown system system /sys/class/kgsl/kgsl-3d0/idle_timer
+    chmod 0664 /sys/class/kgsl/kgsl-3d0/idle_timer
+
 on early-fs
     start vold
 
