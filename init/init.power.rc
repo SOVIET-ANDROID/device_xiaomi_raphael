@@ -18,9 +18,6 @@ on property:vendor.setup.power=1
     # Enable EAS
     write /proc/sys/kernel/sched_energy_aware 1
 
-    # Enable suspend clock reporting
-    write /sys/kernel/debug/clk/debug_suspend 1
-
     # Enable bus-dcvs
     write /sys/devices/platform/soc/soc:qcom,cpu-cpu-llcc-bw/devfreq/soc:qcom,cpu-cpu-llcc-bw/governor bw_hwmon
     write /sys/devices/platform/soc/soc:qcom,cpu-cpu-llcc-bw/devfreq/soc:qcom,cpu-cpu-llcc-bw/polling_interval 40
@@ -117,9 +114,9 @@ on property:vendor.setup.power=1
 
     # IRQ Tuning
     # IRQ 8: msm_drm
-    # IRQ 518: kgsl-3d0
+    # IRQ 506: kgsl-3d0
     write /proc/irq/8/smp_affinity_list 2
-    write /proc/irq/518/smp_affinity_list 1
+    write /proc/irq/506/smp_affinity_list 1
 
 on boot
 # Enable suspend to idle mode to reduce latency during suspend/resume
