@@ -112,6 +112,7 @@
         "1",
         "0"
       ],
+      "DefaultIndex": 0,
       "ResetOnInit": true
     },
     {
@@ -165,6 +166,7 @@
         "1",
         "0"
       ],
+      "DefaultIndex": 1,
       "ResetOnInit": true
     },
     {
@@ -174,6 +176,7 @@
         "1",
         "0"
       ],
+      "DefaultIndex": 1,
       "ResetOnInit": true
     },
     {
@@ -183,6 +186,7 @@
         "10000",
         "58"
       ],
+      "DefaultIndex": 1,
       "ResetOnInit": true
     },
     {
@@ -192,6 +196,7 @@
         "0",
         "3"
       ],
+      "DefaultIndex": 1,
       "ResetOnInit": true
     },
     {
@@ -201,6 +206,7 @@
         "0",
         "20"
       ],
+      "DefaultIndex": 1,
       "ResetOnInit": true
     },
     {
@@ -210,6 +216,7 @@
         "0",
         "10"
       ],
+      "DefaultIndex": 1,
       "ResetOnInit": true
     },
     {
@@ -220,6 +227,7 @@
         "9155",
         "2288"
       ],
+      "DefaultIndex": 2,
       "ResetOnInit": true
     },
     {
@@ -230,6 +238,7 @@
         "2597",
         "762"
       ],
+      "DefaultIndex": 2,
       "ResetOnInit": true
     },
     {
@@ -239,6 +248,7 @@
         "1440000000",
         "300000000"
       ],
+      "DefaultIndex": 1,
       "ResetOnInit": true
     },
     {
@@ -248,6 +258,7 @@
         "2c",
         "64"
       ],
+      "DefaultIndex": 1,
       "HoldFd": true
     },
     {
@@ -257,6 +268,7 @@
         "0",
         "1"
       ],
+      "DefaultIndex": 1,
       "ResetOnInit": true
     },
     {
@@ -266,6 +278,8 @@
         "1",
         "0"
       ]
+      "DefaultIndex": 1,
+      "ResetOnInit": true
     },
     {
       "Name": "PowerHALMainState",
