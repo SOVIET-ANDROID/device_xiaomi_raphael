@@ -39,7 +39,7 @@ class GpuStateResidencyDataProvider : public IStateResidencyDataProvider {
     bool getTotalTime(const std::string &path, uint64_t &totalTimeMs);
     const uint32_t mPowerEntityId;
     const uint32_t mActiveId;
-    /* (TODO (b/117228832): enable this) const uint32_t mSuspendId; */
+    const uint32_t mSuspendId;
 };
 
 }  // namespace powerstats

@@ -29,7 +29,7 @@ namespace pixel {
 namespace powerstats {
 
 GpuStateResidencyDataProvider::GpuStateResidencyDataProvider(uint32_t id)
-    : mPowerEntityId(id), mActiveId(0) /* (TODO (b/117228832): enable this) , mSuspendId(1) */ {}
+    : mPowerEntityId(id), mActiveId(0), mSuspendId(1) {}
 
 bool GpuStateResidencyDataProvider::getTotalTime(const std::string &path, uint64_t &totalTimeMs) {
     std::ifstream inFile(path, std::ifstream::in);
@@ -52,27 +52,25 @@ bool GpuStateResidencyDataProvider::getTotalTime(const std::string &path, uint64
 
 bool GpuStateResidencyDataProvider::getResults(
     std::unordered_map<uint32_t, PowerEntityStateResidencyResult> &results) {
-    uint64_t totalActiveTimeUs = 0;
-    if (!getTotalTime("/sys/class/kgsl/kgsl-3d0/gpu_clock_stats", totalActiveTimeUs)) {
+    // gpu_clock_stats reports time spent at each frequency level in milliseconds
+    uint64_t totalActiveTimeMs = 0;
+    if (!getTotalTime("/sys/class/kgsl/kgsl-3d0/gpu_clock_stats", totalActiveTimeMs)) {
         LOG(ERROR) << __func__ << "Failed to get results for GPU:Active";
         return false;
     }
 
-    /* (TODO (b/117228832): enable this)
+    // suspend_time reports total GPU suspend duration in milliseconds
     uint64_t totalSuspendTimeMs = 0;
     if (!getTotalTime("/sys/class/kgsl/kgsl-3d0/devfreq/suspend_time", totalSuspendTimeMs)) {
         LOG(ERROR) << __func__ << "Failed to get results for GPU:Suspend";
         return false;
     }
-    */
 
     PowerEntityStateResidencyResult result = {
         .powerEntityId = mPowerEntityId,
         .stateResidencyData = {
-            {.powerEntityStateId = mActiveId, .totalTimeInStateMs = totalActiveTimeUs / 1000},
-            /* (TODO (b/117228832): enable this)
+            {.powerEntityStateId = mActiveId,  .totalTimeInStateMs = totalActiveTimeMs},
             {.powerEntityStateId = mSuspendId, .totalTimeInStateMs = totalSuspendTimeMs},
-            */
         }};
 
     results.emplace(std::make_pair(mPowerEntityId, result));
@@ -82,10 +80,8 @@ bool GpuStateResidencyDataProvider::getResults(
 std::vector<PowerEntityStateSpace> GpuStateResidencyDataProvider::getStateSpaces() {
     return {{.powerEntityId = mPowerEntityId,
              .states = {
-                 {.powerEntityStateId = mActiveId, .powerEntityStateName = "Active"},
-                 /* (TODO (b/117228832): enable this)
-                 {.powerEntityStateId = mSuspendId, .powerEntityStateName = "Suspend"}
-                 */
+                 {.powerEntityStateId = mActiveId,  .powerEntityStateName = "Active"},
+                 {.powerEntityStateId = mSuspendId, .powerEntityStateName = "Suspend"},
              }}};
 }
 
