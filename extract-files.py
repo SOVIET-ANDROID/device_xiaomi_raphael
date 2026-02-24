@@ -74,6 +74,11 @@ blob_fixups: blob_fixups_user_type = {
         'vendor/lib/libaudioroute_ext.so',
     ): blob_fixup()
         .replace_needed('libaudioroute.so', 'libaudioroute-v34.so'),
+    (
+    'vendor/etc/seccomp_policy/vendor.qti.hardware.dsp.policy' 
+    ): blob_fixup()
+        .add_line_if_missing('madvise: 1')
+        .add_line_if_missing('+gettimeofday: 1'),
 }  # fmt: skip
 
 module = ExtractUtilsModule(
