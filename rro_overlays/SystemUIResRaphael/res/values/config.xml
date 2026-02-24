@@ -39,9 +39,6 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          low powered state yet. -->
     <bool name="doze_single_tap_uses_prox">false</bool>
 
-    <!-- Whether usage of the proximity sensor during doze is supported -->
-    <bool name="doze_proximity_sensor_supported">false</bool>
-
     <!-- Doze: whether the long press sensor uses the proximity sensor.
          If both this parameter and doze_selectively_register_prox are true, registration for the
          sensor will be delayed when the device first enters dozing but the device has not entered its
