@@ -1,0 +1,68 @@
+{
+  "Profiles": [
+    {
+      "Name": "SCHED_QOS_SENSITIVE_EXTREME",
+      "Actions": [
+        {
+          "Name": "WriteFile",
+          "Params": {
+            "FilePath": "/dev/cpuctl/top-app/cpu.uclamp.latency_sensitive",
+            "Value": "1",
+            "LogFailures": "false"
+          }
+        },
+        {
+          "Name": "SetAttribute",
+          "Params": {
+            "Name": "UclampMin",
+            "Value": "200"
+          }
+        }
+      ]
+    },
+    {
+      "Name": "SCHED_QOS_SENSITIVE_STANDARD",
+      "Actions": [
+        {
+          "Name": "WriteFile",
+          "Params": {
+            "FilePath": "/dev/cpuctl/top-app/cpu.uclamp.latency_sensitive",
+            "Value": "1",
+            "LogFailures": "false"
+          }
+        },
+        {
+          "Name": "SetAttribute",
+          "Params": {
+            "Name": "UclampMin",
+            "Value": "100"
+          }
+        }
+      ]
+    },
+    {
+      "Name": "PreferHighCapSet",
+      "Actions": []
+    },
+    {
+      "Name": "SCHED_QOS_NONE",
+      "Actions": [
+        {
+          "Name": "WriteFile",
+          "Params": {
+            "FilePath": "/dev/cpuctl/top-app/cpu.uclamp.latency_sensitive",
+            "Value": "0",
+            "LogFailures": "false"
+          }
+        },
+        {
+          "Name": "SetAttribute",
+          "Params": {
+            "Name": "UclampMin",
+            "Value": "0"
+          }
+        }
+      ]
+    }
+  ]
+}

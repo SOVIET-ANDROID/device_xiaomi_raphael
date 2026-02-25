@@ -495,6 +495,7 @@ PRODUCT_PACKAGES += \
 
 # Enable Hint maneger for SurfaceFlinger and HWUI
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    debug.sf.enable_adpf_cpu_hint=true \
     debug.hwui.use_hint_manager=true \
     debug.hwui.target_cpu_time_percent=30
 
@@ -574,7 +575,7 @@ PRODUCT_PACKAGES += \
 
 # Task Profiles
 PRODUCT_COPY_FILES += \
-    system/core/libprocessgroup/profiles/task_profiles.json:$(TARGET_COPY_OUT_VENDOR)/etc/task_profiles.json \
+    $(LOCAL_PATH)/configs/etc/task_profiles.json:$(TARGET_COPY_OUT_VENDOR)/etc/task_profiles.json \
     system/core/libprocessgroup/profiles/cgroups.json:$(TARGET_COPY_OUT_VENDOR)/etc/cgroups.json
 
 # Tetheroffload

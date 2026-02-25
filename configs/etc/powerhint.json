@@ -1,8 +1,68 @@
 {
+  "AdpfConfig": [
+    {
+      "Name": "ADPF_60HZ",
+      "PID_On": true,
+      "PID_Po": 2,
+      "PID_Pu": 0.5,
+      "PID_I": 0,
+      "PID_I_Init": 200,
+      "PID_I_High": 512,
+      "PID_I_Low": -30,
+      "PID_Do": 500,
+      "PID_Du": 0,
+      "UclampMin_On": true,
+      "UclampMin_Init": 231,
+      "UclampMin_LoadUp": 400,
+      "UclampMin_LoadReset": 400,
+      "UclampMin_High": 400,
+      "UclampMin_Low": 2,
+      "UclampMax_EfficientBase": 593,
+      "UclampMax_EfficientOffset": 150,
+      "SamplingWindow_P": 1,
+      "SamplingWindow_I": 0,
+      "SamplingWindow_D": 1,
+      "ReportingRateLimitNs": 16666667,
+      "TargetTimeFactor": 1,
+      "StaleTimeFactor": 15,
+      "JankCheckTimeFactor": 1.2,
+      "GpuBoost": false
+    },
+    {
+      "Name": "SYSTEM_UI_PROFILE",
+      "PID_On": true,
+      "PID_Po": 2,
+      "PID_Pu": 0.5,
+      "PID_I": 0,
+      "PID_I_Init": 200,
+      "PID_I_High": 512,
+      "PID_I_Low": -30,
+      "PID_Do": 500,
+      "PID_Du": 0,
+      "UclampMin_On": true,
+      "UclampMin_Init": 231,
+      "UclampMin_LoadUp": 650,
+      "UclampMin_LoadReset": 650,
+      "UclampMin_High": 480,
+      "UclampMin_Low": 2,
+      "UclampMax_EfficientBase": 593,
+      "UclampMax_EfficientOffset": 150,
+      "SamplingWindow_P": 1,
+      "SamplingWindow_I": 0,
+      "SamplingWindow_D": 1,
+      "ReportingRateLimitNs": 16666667,
+      "TargetTimeFactor": 1,
+      "StaleTimeFactor": 15,
+      "JankCheckTimeFactor": 1.2,
+      "GpuBoost": false
+    }
+  ],
   "Nodes": [
     {
       "Name": "CPULittleClusterMaxFreq",
-      "Path": "/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq",
+      "Paths": [
+        "/sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq"
+      ],
       "Values": [
         "1785600",
         "1113600",
@@ -18,7 +78,9 @@
     },
     {
       "Name": "CPULittleClusterMinFreq",
-      "Path": "/sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq",
+      "Paths": [
+        "/sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq"
+      ],
       "Values": [
         "1785600",
         "576000",
@@ -29,7 +91,9 @@
     },
     {
       "Name": "CPUBigClusterMaxFreq",
-      "Path": "/sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq",
+      "Paths": [
+        "/sys/devices/system/cpu/cpufreq/policy4/scaling_max_freq"
+      ],
       "Values": [
         "2419200",
         "2016000",
@@ -45,7 +109,9 @@
     },
     {
       "Name": "CPUBigClusterMinFreq",
-      "Path": "/sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq",
+      "Paths": [
+        "/sys/devices/system/cpu/cpufreq/policy4/scaling_min_freq"
+      ],
       "Values": [
         "2419200",
         "1497600",
@@ -58,7 +124,9 @@
     },
     {
       "Name": "CPUBigPlusClusterMaxFreq",
-      "Path": "/sys/devices/system/cpu/cpu7/cpufreq/scaling_max_freq",
+      "Paths": [
+        "/sys/devices/system/cpu/cpufreq/policy7/scaling_max_freq"
+      ],
       "Values": [
         "2841600",
         "2016000",
@@ -74,7 +142,9 @@
     },
     {
       "Name": "CPUBigPlusClusterMinFreq",
-      "Path": "/sys/devices/system/cpu/cpu7/cpufreq/scaling_min_freq",
+      "Paths": [
+        "/sys/devices/system/cpu/cpufreq/policy7/scaling_min_freq"
+      ],
       "Values": [
         "2841600",
         "1497600",
@@ -87,7 +157,9 @@
     },
     {
       "Name": "Dex2oatUClampMaxBoost",
-      "Path": "/dev/cpuctl/dex2oat/cpu.uclamp.max",
+      "Paths": [
+        "/dev/cpuctl/dex2oat/cpu.uclamp.max"
+      ],
       "Values": [
         "40",
         "60"
@@ -97,57 +169,83 @@
     },
     {
       "Name": "TAUClampBoost",
-      "Path": "/dev/cpuctl/top-app/cpu.uclamp.min",
+      "Paths": [
+        "/dev/cpuctl/top-app/cpu.uclamp.min"
+      ],
       "Values": [
         "0",
-        "30"
+        "400"
       ],
       "DefaultIndex": 0,
       "ResetOnInit": true
     },
     {
       "Name": "TAUClampLatency",
-      "Path": "/dev/cpuctl/top-app/cpu.uclamp.latency_sensitive",
+      "Paths": [
+        "/dev/cpuctl/top-app/cpu.uclamp.latency_sensitive"
+      ],
       "Values": [
         "1",
         "0"
       ],
+      "DefaultIndex": 0,
       "ResetOnInit": true
     },
     {
       "Name": "FGUClampBoost",
-      "Path": "/dev/cpuctl/foreground/cpu.uclamp.min",
+      "Paths": [
+        "/dev/cpuctl/foreground/cpu.uclamp.min"
+      ],
       "Values": [
         "0",
-        "20"
+        "159"
+      ],
+      "DefaultIndex": 0,
+      "ResetOnInit": true
+    },
+    {
+      "Name": "FWUClampBoost",
+      "Paths": [
+        "/dev/cpuctl/foreground_window/cpu.uclamp.min"
+      ],
+      "Values": [
+        "0",
+        "200"
       ],
       "DefaultIndex": 0,
       "ResetOnInit": true
     },
     {
       "Name": "MLUclampBoost",
-      "Path": "/dev/cpuctl/nnapi-hal/cpu.uclamp.min",
+      "Paths": [
+        "/dev/cpuctl/nnapi-hal/cpu.uclamp.min"
+      ],
       "Values": [
         "0",
-        "75"
+        "650"
       ],
       "DefaultIndex": 0,
       "ResetOnInit": true
     },
     {
       "Name": "GPUMaxFreq",
-      "Path": "/sys/class/kgsl/kgsl-3d0/max_pwrlevel",
+      "Paths": [
+        "/sys/class/kgsl/kgsl-3d0/max_pwrlevel"
+      ],
       "Values": [
         "0",
         "1",
-        "2"
+        "2",
+        "3"
       ],
       "DefaultIndex": 0,
       "ResetOnInit": true
     },
     {
       "Name": "GPUMinFreq",
-      "Path": "/sys/class/kgsl/kgsl-3d0/min_pwrlevel",
+      "Paths": [
+        "/sys/class/kgsl/kgsl-3d0/min_pwrlevel"
+      ],
       "Values": [
         "0",
         "1",
@@ -156,159 +254,124 @@
         "5",
         "6"
       ],
-      "ResetOnInit": true
-    },
-    {
-      "Name": "GPUBusMinFreq",
-      "Path": "/sys/class/devfreq/soc:qcom,gpubw/min_freq",
-      "Values": [
-        "6881",
-        "5931",
-        "3879",
-        "0"
-      ],
+      "DefaultIndex": 4,
       "ResetOnInit": true
     },
     {
       "Name": "GPUForceRailOn",
-      "Path": "/sys/class/kgsl/kgsl-3d0/force_rail_on",
+      "Paths": [
+        "/sys/class/kgsl/kgsl-3d0/force_rail_on"
+      ],
       "Values": [
         "1",
         "0"
       ],
+      "DefaultIndex": 1,
       "ResetOnInit": true
     },
     {
       "Name": "GPUForceClkOn",
-      "Path": "/sys/class/kgsl/kgsl-3d0/force_clk_on",
+      "Paths": [
+        "/sys/class/kgsl/kgsl-3d0/force_clk_on"
+      ],
       "Values": [
         "1",
         "0"
       ],
+      "DefaultIndex": 1,
       "ResetOnInit": true
     },
     {
       "Name": "GPUIdleTimer",
-      "Path": "/sys/class/kgsl/kgsl-3d0/idle_timer",
+      "Paths": [
+        "/sys/class/kgsl/kgsl-3d0/idle_timer"
+      ],
       "Values": [
         "10000",
         "58"
       ],
+      "DefaultIndex": 1,
       "ResetOnInit": true
     },
     {
       "Name": "CPUBWHystTriggerCount",
-      "Path": "/sys/class/devfreq/soc:qcom,cpu-cpu-llcc-bw/bw_hwmon/hyst_trigger_count",
+      "Paths": [
+        "/sys/class/devfreq/soc:qcom,cpu-cpu-llcc-bw/bw_hwmon/hyst_trigger_count"
+      ],
       "Values": [
         "0",
         "3"
       ],
+      "DefaultIndex": 1,
       "ResetOnInit": true
     },
     {
       "Name": "CPUBWHistMemory",
-      "Path": "/sys/class/devfreq/soc:qcom,cpu-cpu-llcc-bw/bw_hwmon/hist_memory",
+      "Paths": [
+        "/sys/class/devfreq/soc:qcom,cpu-cpu-llcc-bw/bw_hwmon/hist_memory"
+      ],
       "Values": [
         "0",
         "20"
       ],
+      "DefaultIndex": 1,
       "ResetOnInit": true
     },
     {
       "Name": "CPUBWHystLength",
-      "Path": "/sys/class/devfreq/soc:qcom,cpu-cpu-llcc-bw/bw_hwmon/hyst_length",
+      "Paths": [
+        "/sys/class/devfreq/soc:qcom,cpu-cpu-llcc-bw/bw_hwmon/hyst_length"
+      ],
       "Values": [
         "0",
         "10"
       ],
-      "ResetOnInit": true
-    },
-    {
-      "Name": "CPUBWSampleMs",
-      "Path": "/sys/class/devfreq/soc:qcom,cpu-cpu-llcc-bw/bw_hwmon/sample_ms",
-      "Values": [
-        "10",
-        "4"
-      ],
-      "ResetOnInit": true
-    },
-    {
-      "Name": "CPUBWIOPercent",
-      "Path": "/sys/class/devfreq/soc:qcom,cpu-cpu-llcc-bw/bw_hwmon/io_percent",
-      "Values": [
-        "80",
-        "50"
-      ],
+      "DefaultIndex": 1,
       "ResetOnInit": true
     },
     {
       "Name": "CPUBWMinFreq",
-      "Path": "/sys/class/devfreq/soc:qcom,cpu-cpu-llcc-bw/min_freq",
+      "Paths": [
+        "/sys/class/devfreq/soc:qcom,cpu-cpu-llcc-bw/min_freq"
+      ],
       "Values": [
         "14236",
         "9155",
         "2288"
       ],
+      "DefaultIndex": 2,
       "ResetOnInit": true
     },
     {
       "Name": "LLCCBWMinFreq",
-      "Path": "/sys/class/devfreq/soc:qcom,cpu-llcc-ddr-bw/min_freq",
+      "Paths": [
+        "/sys/class/devfreq/soc:qcom,cpu-llcc-ddr-bw/min_freq"
+      ],
       "Values": [
         "6881",
         "2597",
         "762"
       ],
-      "ResetOnInit": true
-    },
-    {
-      "Name": "LLCCBWSampleMs",
-      "Path": "/sys/class/devfreq/soc:qcom,cpu-llcc-ddr-bw/bw_hwmon/sample_ms",
-      "Values": [
-        "10",
-        "4"
-      ],
-      "ResetOnInit": true
-    },
-    {
-      "Name": "LLCCBWHistMemory",
-      "Path": "/sys/class/devfreq/soc:qcom,cpu-llcc-ddr-bw/bw_hwmon/hist_memory",
-      "Values": [
-        "0",
-        "20"
-      ],
-      "ResetOnInit": true
-    },
-    {
-      "Name": "LLCCBWHystLength",
-      "Path": "/sys/class/devfreq/soc:qcom,cpu-llcc-ddr-bw/bw_hwmon/hyst_length",
-      "Values": [
-        "0",
-        "10"
-      ],
-      "ResetOnInit": true
-    },
-    {
-      "Name": "LLCCBWHystTriggerCount",
-      "Path": "/sys/class/devfreq/soc:qcom,cpu-llcc-ddr-bw/bw_hwmon/hyst_trigger_count",
-      "Values": [
-        "0",
-        "3"
-      ],
+      "DefaultIndex": 2,
       "ResetOnInit": true
     },
     {
       "Name": "L3BigClusterMinFreq",
-      "Path": "/sys/class/devfreq/soc:qcom,cpu4-cpu-l3-lat/min_freq",
+      "Paths": [
+        "/sys/class/devfreq/soc:qcom,cpu4-cpu-l3-lat/min_freq"
+      ],
       "Values": [
         "1440000000",
         "300000000"
       ],
+      "DefaultIndex": 1,
       "ResetOnInit": true
     },
     {
       "Name": "PMQoSCpuDmaLatency",
-      "Path": "/dev/cpu_dma_latency",
+      "Paths": [
+        "/dev/cpu_dma_latency"
+      ],
       "Values": [
         "2c",
         "64"
@@ -317,24 +380,33 @@
     },
     {
       "Name": "UfsClkGateEnable",
-      "Path": "/sys/devices/platform/soc/1d84000.ufshc/clkgate_enable",
+      "Paths": [
+        "/sys/devices/platform/soc/1d84000.ufshc/clkgate_enable"
+      ],
       "Values": [
         "0",
         "1"
       ],
+      "DefaultIndex": 1,
       "ResetOnInit": true
     },
     {
       "Name": "DisplayWakeup",
-      "Path": "/sys/devices/platform/soc/ae00000.qcom,mdss_mdp/drm/card0/sde-crtc-0/early_wakeup",
+      "Paths": [
+        "/sys/devices/platform/soc/ae00000.qcom,mdss_mdp/drm/card0/sde-crtc-0/early_wakeup"
+      ],
       "Values": [
         "1",
         "0"
-      ]
+      ],
+      "DefaultIndex": 1,
+      "ResetOnInit": true
     },
     {
       "Name": "PowerHALMainState",
-      "Path": "vendor.powerhal.state",
+      "Paths": [
+        "vendor.powerhal.state"
+      ],
       "Values": [
         "SUSTAINED_PERFORMANCE",
         ""
@@ -343,7 +415,9 @@
     },
     {
       "Name": "PowerHALAudioState",
-      "Path": "vendor.powerhal.audio",
+      "Paths": [
+        "vendor.powerhal.audio"
+      ],
       "Values": [
         "AUDIO_STREAMING_LOW_LATENCY",
         ""
@@ -352,7 +426,9 @@
     },
     {
       "Name": "PowerHALRenderingState",
-      "Path": "vendor.powerhal.rendering",
+      "Paths": [
+        "vendor.powerhal.rendering"
+      ],
       "Values": [
         "EXPENSIVE_RENDERING",
         ""
@@ -377,7 +453,7 @@
       "PowerHint": "SUSTAINED_PERFORMANCE",
       "Node": "CPUBigPlusClusterMaxFreq",
       "Duration": 0,
-      "Value": "1401600"
+      "Value": "1804800"
     },
     {
       "PowerHint": "SUSTAINED_PERFORMANCE",
@@ -389,25 +465,31 @@
       "PowerHint": "SUSTAINED_PERFORMANCE",
       "Node": "GPUMaxFreq",
       "Duration": 0,
-      "Value": "2"
+      "Value": "3"
     },
     {
       "PowerHint": "INTERACTION",
       "Node": "TAUClampBoost",
-      "Duration": 5000,
-      "Value": "30"
+      "Duration": 500,
+      "Value": "400"
     },
     {
       "PowerHint": "INTERACTION",
       "Node": "TAUClampLatency",
-      "Duration": 5000,
+      "Duration": 500,
       "Value": "1"
     },
     {
       "PowerHint": "INTERACTION",
       "Node": "FGUClampBoost",
-      "Duration": 3000,
-      "Value": "20"
+      "Duration": 500,
+      "Value": "159"
+    },
+    {
+      "PowerHint": "INTERACTION",
+      "Node": "FWUClampBoost",
+      "Duration": 500,
+      "Value": "200"
     },
     {
       "PowerHint": "INTERACTION",
@@ -515,7 +597,7 @@
       "PowerHint": "LAUNCH",
       "Node": "TAUClampBoost",
       "Duration": 3000,
-      "Value": "30"
+      "Value": "400"
     },
     {
       "PowerHint": "LAUNCH",
@@ -527,7 +609,13 @@
       "PowerHint": "LAUNCH",
       "Node": "FGUClampBoost",
       "Duration": 3000,
-      "Value": "20"
+      "Value": "159"
+    },
+    {
+      "PowerHint": "LAUNCH",
+      "Node": "FWUClampBoost",
+      "Duration": 3000,
+      "Value": "200"
     },
     {
       "PowerHint": "AUDIO_LAUNCH",
@@ -577,10 +665,88 @@
       "Value": "1"
     },
     {
+      "PowerHint": "DISPLAY_UPDATE_IMMINENT",
+      "Node": "TAUClampBoost",
+      "Duration": 50,
+      "Value": "400"
+    },
+    {
+      "PowerHint": "DISPLAY_UPDATE_IMMINENT",
+      "Node": "TAUClampLatency",
+      "Duration": 50,
+      "Value": "1"
+    },
+    {
+      "PowerHint": "DISPLAY_CHANGE",
+      "Node": "TAUClampBoost",
+      "Duration": 5000,
+      "Value": "400"
+    },
+    {
+      "PowerHint": "DISPLAY_CHANGE",
+      "Node": "TAUClampLatency",
+      "Duration": 5000,
+      "Value": "1"
+    },
+    {
+      "PowerHint": "DISPLAY_CHANGE",
+      "Node": "FGUClampBoost",
+      "Duration": 5000,
+      "Value": "159"
+    },
+    {
+      "PowerHint": "DISPLAY_IDLE",
+      "Node": "TAUClampBoost",
+      "Duration": 0,
+      "Value": "0"
+    },
+    {
+      "PowerHint": "DISPLAY_IDLE",
+      "Node": "TAUClampLatency",
+      "Duration": 0,
+      "Value": "0"
+    },
+    {
+      "PowerHint": "DISPLAY_IDLE",
+      "Node": "FGUClampBoost",
+      "Duration": 0,
+      "Value": "0"
+    },
+    {
+      "PowerHint": "DISPLAY_IDLE",
+      "Node": "FWUClampBoost",
+      "Duration": 0,
+      "Value": "0"
+    },
+    {
+      "PowerHint": "DISPLAY_INACTIVE",
+      "Node": "TAUClampBoost",
+      "Duration": 0,
+      "Value": "0"
+    },
+    {
+      "PowerHint": "DISPLAY_INACTIVE",
+      "Node": "TAUClampLatency",
+      "Duration": 0,
+      "Value": "0"
+    },
+    {
+      "PowerHint": "DISPLAY_INACTIVE",
+      "Node": "FGUClampBoost",
+      "Duration": 0,
+      "Value": "0"
+    },
+    {
+      "PowerHint": "DISPLAY_INACTIVE",
+      "Node": "FWUClampBoost",
+      "Duration": 0,
+      "Value": "0"
+    },
+    {
       "PowerHint": "ML_ACC",
       "Node": "MLUclampBoost",
       "Duration": 2000,
-      "Value": "75"
+      "Value": "650"
     },
     {
       "PowerHint": "ML_ACC",
@@ -605,6 +771,77 @@
       "Node": "CPUBigClusterMaxFreq",
       "Duration": 0,
       "Value": "2016000"
+    },
+    {
+      "PowerHint": "ADPF_CPU_LOAD_UP",
+      "Node": "TAUClampBoost",
+      "Duration": 500,
+      "Value": "400"
+    },
+    {
+      "PowerHint": "ADPF_CPU_LOAD_UP",
+      "Node": "TAUClampLatency",
+      "Duration": 500,
+      "Value": "1"
+    },
+    {
+      "PowerHint": "ADPF_CPU_LOAD_UP",
+      "Node": "FWUClampBoost",
+      "Duration": 500,
+      "Value": "200"
+    },
+    {
+      "PowerHint": "ADPF_CPU_LOAD_RESET",
+      "Node": "TAUClampBoost",
+      "Duration": 0,
+      "Value": "0"
+    },
+    {
+      "PowerHint": "ADPF_CPU_LOAD_RESET",
+      "Node": "FWUClampBoost",
+      "Duration": 0,
+      "Value": "0"
+    },
+    {
+      "PowerHint": "ADPF_CPU_LOAD_RESUME",
+      "Node": "TAUClampBoost",
+      "Duration": 200,
+      "Value": "400"
+    },
+    {
+      "PowerHint": "ADPF_CPU_LOAD_RESUME",
+      "Node": "FWUClampBoost",
+      "Duration": 200,
+      "Value": "200"
+    },
+    {
+      "PowerHint": "GAME_LOADING",
+      "Type": "DoHint",
+      "Value": "LAUNCH"
+    },
+    {
+      "PowerHint": "GAME_LOADING",
+      "Node": "GPUMinFreq",
+      "Duration": 3000,
+      "Value": "1"
+    },
+    {
+      "PowerHint": "LOW_POWER",
+      "Node": "CPUBigClusterMaxFreq",
+      "Duration": 0,
+      "Value": "1401600"
+    },
+    {
+      "PowerHint": "LOW_POWER",
+      "Node": "CPUBigPlusClusterMaxFreq",
+      "Duration": 0,
+      "Value": "1804800"
+    },
+    {
+      "PowerHint": "LOW_POWER",
+      "Node": "GPUMaxFreq",
+      "Duration": 0,
+      "Value": "3"
     }
   ]
 }
