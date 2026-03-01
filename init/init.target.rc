@@ -54,18 +54,12 @@ on init
 
     # Configure governor settings for little cluster
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor schedutil
-    write /sys/devices/system/cpu/cpu0/cpufreq/schedutil/up_rate_limit_us 500
-    write /sys/devices/system/cpu/cpu0/cpufreq/schedutil/down_rate_limit_us 20000
 
     # Configure governor settings for big cluster
     write /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor schedutil
-    write /sys/devices/system/cpu/cpu4/cpufreq/schedutil/up_rate_limit_us 500
-    write /sys/devices/system/cpu/cpu4/cpufreq/schedutil/down_rate_limit_us 20000
 
     # Configure governor settings for big big CPU
     write /sys/devices/system/cpu/cpu7/cpufreq/scaling_governor schedutil
-    write /sys/devices/system/cpu/cpu7/cpufreq/schedutil/up_rate_limit_us 500
-    write /sys/devices/system/cpu/cpu7/cpufreq/schedutil/down_rate_limit_us 20000
 
     # Boot time uclamp tuning
     write /dev/cpuctl/top-app/cpu.uclamp.min 15
@@ -80,14 +74,21 @@ on init
     # Migrate cpuctl tasks once to cpuctl system
     copy_per_line /dev/cpuctl/tasks /dev/cpuctl/system/tasks
 
+    # Configure cpusets
+    write /dev/cpuset/audio-app/cpus 0-3
+    write /dev/cpuset/display/cpus 4-6
+    write /dev/cpuset/foreground/cpus 0-6
+    write /dev/cpuset/foreground/boost/cpus 0-6
+    write /dev/cpuset/background/cpus 0-1
+    write /dev/cpuset/system-background/cpus 0-2
+    write /dev/cpuset/top-app/cpus 0-7
+
 on late-init
     chown system system /sys/devices/virtual/thermal/tz-by-name/sdm-therm-monitor/trip_point_0_temp
     chown system system /sys/devices/virtual/thermal/tz-by-name/sdm-therm-monitor/trip_point_0_hyst
     chown system system /sys/devices/virtual/thermal/tz-by-name/usbc-therm-monitor/trip_point_0_temp
     chown system system /sys/devices/virtual/thermal/tz-by-name/usbc-therm-monitor/trip_point_0_hyst
     chown system system /sys/devices/virtual/thermal/tz-by-name/soc/mode
-    chown system system /sys/devices/virtual/thermal/tz-by-name/bcl-virt-monitor/trip_point_0_temp
-    chown system system /sys/devices/virtual/thermal/tz-by-name/bcl-virt-monitor/trip_point_0_hyst
 
 on early-fs
     start vold
@@ -147,15 +148,8 @@ on boot
     chown system system /sys/kernel/qvr_external_sensor/fd
     start rmt_storage
     start rfs_access
-    write /dev/cpuset/audio-app/cpus 0-3
-    write /dev/cpuset/display/cpus 4-6
-    write /dev/cpuset/foreground/cpus 0-6
-    write /dev/cpuset/foreground/boost/cpus 0-6
-    write /dev/cpuset/background/cpus 0-1
-    write /dev/cpuset/system-background/cpus 0-2
-    write /dev/cpuset/top-app/cpus 0-7
 
-#USB controller configuration
+    # USB controller configuration
     setprop vendor.usb.rndis.func.name "gsi"
     setprop vendor.usb.rmnet.func.name "gsi"
     setprop vendor.usb.rmnet.inst.name "rmnet"
@@ -167,7 +161,6 @@ on boot && property:persist.vendor.usb.controller.default=*
     setprop vendor.usb.controller ${persist.vendor.usb.controller.default}
 
 on property:sys.boot_completed=1
-
     # Setup final cpu.uclamp.min
     write /dev/cpuctl/top-app/cpu.uclamp.min 0
     write /dev/cpuctl/foreground/cpu.uclamp.min 10
@@ -280,10 +273,10 @@ service vendor.thermal-engine /vendor/bin/thermal-engine -c /vendor/etc/thermal-
     socket thermal-send-rule stream 0660 system system
 
 service vendor.lowi /vendor/bin/sscrpcd
-   class core
-   user system
-   group system wakelock
-   capabilities BLOCK_SUSPEND
+    class core
+    user system
+    group system wakelock
+    capabilities BLOCK_SUSPEND
 
 service vendor.energy-awareness /vendor/bin/energy-awareness
     class main
