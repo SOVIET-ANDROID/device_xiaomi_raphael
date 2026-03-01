@@ -1,7 +1,7 @@
 {
   "AdpfConfig": [
     {
-      "Name": "ADPF_60HZ",
+      "Name": "REFRESH_60FPS",
       "PID_On": true,
       "PID_Po": 2,
       "PID_Pu": 0.5,
@@ -434,6 +434,19 @@
         ""
       ],
       "Type": "Property"
+    },
+    {
+      "Name": "SYSTEM_UI_ADPF_PROFILES",
+      "Paths": [
+        "<AdpfConfig>:SYSTEM_UI"
+      ],
+      "Values": [
+        "SYSTEM_UI_PROFILE",
+        ""
+      ],
+      "DefaultIndex": 0,
+      "ResetOnInit": true,
+      "Type": "Event"
     }
   ],
   "Actions": [
