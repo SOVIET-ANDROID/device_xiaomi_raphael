@@ -176,21 +176,6 @@
             "Monitor":true
         },
         {
-            "Name":"npu-usr",
-            "Type":"NPU",
-            "HotThreshold":[
-                "NAN",
-                "NAN",
-                "NAN",
-                "NAN",
-                "NAN",
-                "NAN",
-                "NAN"
-            ],
-            "VrThreshold":"NAN",
-            "Multiplier":0.001
-        },
-        {
             "Name":"sdm-therm-monitor",
             "Type":"SKIN",
             "HotThreshold":[
@@ -234,12 +219,40 @@
     ],
     "CoolingDevices":[
         {
-            "Name":"npu",
-            "Type":"NPU"
-        },
-        {
             "Name":"battery",
             "Type":"BATTERY"
+        },
+        {
+            "Name":"thermal-cpufreq-4",
+            "Type":"CPU"
+        },
+        {
+            "Name":"thermal-cpufreq-5",
+            "Type":"CPU"
+        },
+        {
+            "Name":"thermal-cpufreq-6",
+            "Type":"CPU"
+        },
+        {
+            "Name":"thermal-cpufreq-7",
+            "Type":"CPU"
+        },
+        {
+            "Name":"thermal-devfreq-0",
+            "Type":"GPU"
+        },
+        {
+            "Name":"panel0-backlight",
+            "Type":"DISPLAY"
+        },
+        {
+            "Name":"modem0_pa",
+            "Type":"MODEM"
+        },
+        {
+            "Name":"modem0_proc",
+            "Type":"MODEM"
         }
     ]
 }
