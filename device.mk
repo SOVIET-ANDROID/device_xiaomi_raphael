@@ -473,7 +473,7 @@ PRODUCT_PACKAGES += \
 
 # Powerstats
 PRODUCT_PACKAGES += \
-    android.hardware.power.stats-service.raphael
+    android.hardware.power.stats@1.0-service.raphael
 
 # Partitions
 PRODUCT_PACKAGES += \

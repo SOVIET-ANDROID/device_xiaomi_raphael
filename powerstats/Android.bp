@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2021 The Android Open Source Project
+// Copyright (C) 2018 The Android Open Source Project
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,38 +12,32 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-// PowerStats AIDL V2 HAL for Xiaomi Raphael (SM8150 / Adreno 640).
-// Self-contained: no dependency on hardware/google/pixel/powerstats.
-
 cc_binary {
-    name: "android.hardware.power.stats-service.raphael",
+    name: "android.hardware.power.stats@1.0-service.raphael",
     relative_install_path: "hw",
-    init_rc: ["android.hardware.power.stats-service.raphael.rc"],
-    vintf_fragments: ["android.hardware.power.stats-service.raphael.xml"],
-    vendor: true,
-
+    vintf_fragments: ["android.hardware.power.stats@1.0-service.raphael.xml"],
+    init_rc: ["android.hardware.power.stats@1.0-service.raphael.rc"],
     srcs: [
         "service.cpp",
-        "PowerStats.cpp",
-        "GenericStateResidencyDataProvider.cpp",
         "GpuStateResidencyDataProvider.cpp",
-        "DisplayStateResidencyDataProvider.cpp",
     ],
-
-    shared_libs: [
-        "libbase",          // android-base logging, ReadFileToString, boot_clock
-        "libbinder_ndk",    // ABinderProcess_*, AServiceManager_addService
-        "libcutils",
-        "liblog",
-        "libutils",         // android::Looper used by DisplayStateResidencyDataProvider
-        "android.hardware.power.stats-V2-ndk",  // AIDL V2 generated interface
-    ],
-
     cflags: [
         "-Wall",
         "-Werror",
-        // Silence unused-parameter warnings in AIDL-generated stubs.
-        "-Wno-unused-parameter",
     ],
+    static_libs: [
+        "libpixelpowerstats",
+    ],
+    shared_libs: [
+        "libbase",
+        "libcutils",
+        "libfmq",
+        "libhidlbase",
+        "liblog",
+        "libutils",
+        "android.hardware.power.stats@1.0",
+        "pixelpowerstats_provider_aidl_interface-cpp",
+        "libbinder",
+    ],
+    vendor: true,
 }

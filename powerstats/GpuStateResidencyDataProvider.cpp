@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 The Android Open Source Project
+ * Copyright (C) 2019 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#define LOG_TAG "libpixelpowerstats"
 
 #include "GpuStateResidencyDataProvider.h"
 
@@ -21,154 +22,71 @@
 #include <fstream>
 #include <sstream>
 
-namespace aidl {
 namespace android {
 namespace hardware {
-namespace power {
-namespace stats {
+namespace google {
+namespace pixel {
+namespace powerstats {
 
-// SKU 0 fallback (speed-bin=0): 770, 715, 615, 515, 340 MHz
-// Used when gpu_available_frequencies is unreadable at construction time.
-static constexpr uint32_t kFallbackFreqsMhz[] = {770, 715, 615, 515, 340};
+GpuStateResidencyDataProvider::GpuStateResidencyDataProvider(uint32_t id)
+    : mPowerEntityId(id), mActiveId(0), mSuspendId(1) {}
 
-// -----------------------------------------------------------------------
-// Construction — cache the frequency list once so getInfo() and
-// getStateResidencies() always see the same state count / IDs.
-// -----------------------------------------------------------------------
-GpuStateResidencyDataProvider::GpuStateResidencyDataProvider() {
-    mFrequencies = readAvailableFrequenciesMhz();
-
-    if (mFrequencies.empty()) {
-        LOG(WARNING) << "GpuStateResidencyDataProvider: could not read "
-                        "gpu_available_frequencies; using SKU-0 fallback table.";
-        for (uint32_t f : kFallbackFreqsMhz) {
-            mFrequencies.push_back(f);
-        }
+bool GpuStateResidencyDataProvider::getTotalTime(const std::string &path, uint64_t &totalTimeMs) {
+    std::ifstream inFile(path, std::ifstream::in);
+    if (!inFile.is_open()) {
+        PLOG(ERROR) << __func__ << ":Failed to open file " << path;
+        return false;
     }
 
-    LOG(INFO) << "GpuStateResidencyDataProvider: registered " << mFrequencies.size()
-              << " active frequency states + 1 Suspend state.";
-}
+    std::string line;
+    std::getline(inFile, line);
+    std::istringstream lineStream(line, std::istringstream::in);
 
-// -----------------------------------------------------------------------
-// readAvailableFrequenciesMhz
-//
-// The kernel lists frequencies high-to-low, space-separated, with a 0 Hz
-// placeholder at the end (the "off" OPP).  We convert Hz → MHz and drop
-// the 0 Hz entry because:
-//   • gpu_clock_stats reports one counter per *active* OPP, not for off.
-//   • Suspend time is reported separately via suspend_time.
-// -----------------------------------------------------------------------
-/*static*/ std::vector<uint32_t>
-GpuStateResidencyDataProvider::readAvailableFrequenciesMhz() {
-    std::ifstream in("/sys/class/kgsl/kgsl-3d0/gpu_available_frequencies",
-                     std::ifstream::in);
-    if (!in.is_open()) {
-        PLOG(ERROR) << "GpuStateResidencyDataProvider: failed to open "
-                       "gpu_available_frequencies";
-        return {};
+    totalTimeMs = 0;
+    uint64_t curTimeMs = 0;
+    while (lineStream >> curTimeMs) {
+        totalTimeMs += curTimeMs;
     }
-
-    std::vector<uint32_t> freqs;
-    uint32_t hz = 0;
-    while (in >> hz) {
-        if (hz == 0) continue;  // drop the off placeholder
-        freqs.push_back(hz / 1000000u);
-    }
-    return freqs;
-}
-
-// -----------------------------------------------------------------------
-// getInfo — called once at HAL registration.
-// Returns the cached frequency list + one trailing "Suspend" state.
-// -----------------------------------------------------------------------
-std::unordered_map<std::string, std::vector<State>>
-GpuStateResidencyDataProvider::getInfo() {
-    std::vector<State> states;
-    states.reserve(mFrequencies.size() + 1);
-
-    int32_t id = 0;
-    for (uint32_t mhz : mFrequencies) {
-        states.push_back({.id = id++, .name = std::to_string(mhz) + "MHz"});
-    }
-    states.push_back({.id = id, .name = "Suspend"});
-
-    return {{"GPU", states}};
-}
-
-// -----------------------------------------------------------------------
-// getStateResidencies — called periodically by the framework.
-//
-// gpu_clock_stats contains one uint64 per active OPP in the same
-// high-to-low order as gpu_available_frequencies (without the 0 Hz entry).
-// suspend_time contains a single uint64 in milliseconds.
-//
-// On any read failure we return a zero-filled result rather than returning
-// false/nullopt, because the framework will crash (ArrayIndexOutOfBounds in
-// system_server) if a declared entity yields no result.
-// -----------------------------------------------------------------------
-bool GpuStateResidencyDataProvider::getStateResidencies(
-        std::unordered_map<std::string, std::vector<StateResidency>> *results) {
-
-    const int32_t suspendId = static_cast<int32_t>(mFrequencies.size());
-
-    // Pre-populate with zeroes so we always return a full result vector.
-    std::vector<StateResidency> residencies;
-    residencies.reserve(mFrequencies.size() + 1);
-    for (int32_t i = 0; i <= suspendId; ++i) {
-        residencies.push_back({.id = i, .totalTimeInStateMs = 0,
-                               .totalStateEntryCount = 0,
-                               .lastEntryTimestampMs = 0});
-    }
-
-    // --- Active frequency residencies ---
-    {
-        std::ifstream in("/sys/class/kgsl/kgsl-3d0/gpu_clock_stats",
-                         std::ifstream::in);
-        if (!in.is_open()) {
-            LOG(ERROR) << "GpuStateResidencyDataProvider: failed to open gpu_clock_stats; "
-                          "returning zero residencies.";
-            results->emplace("GPU", residencies);
-            return false;
-        }
-
-        int32_t idx = 0;
-        uint64_t timeMs = 0;
-        while (in >> timeMs && idx < static_cast<int32_t>(mFrequencies.size())) {
-            residencies[idx].totalTimeInStateMs = static_cast<int64_t>(timeMs);
-            ++idx;
-        }
-
-        // If the kernel reported fewer entries than we have states the leftover
-        // states stay zero — not ideal, but safe.
-        if (idx < static_cast<int32_t>(mFrequencies.size())) {
-            LOG(WARNING) << "GpuStateResidencyDataProvider: gpu_clock_stats had fewer "
-                            "entries (" << idx << ") than registered states ("
-                         << mFrequencies.size() << ").";
-        }
-    }
-
-    // --- Suspend residency ---
-    {
-        std::ifstream in("/sys/class/kgsl/kgsl-3d0/devfreq/suspend_time",
-                         std::ifstream::in);
-        if (!in.is_open()) {
-            LOG(WARNING) << "GpuStateResidencyDataProvider: failed to open suspend_time; "
-                            "Suspend state will read as 0.";
-        } else {
-            uint64_t suspendMs = 0;
-            if (in >> suspendMs) {
-                residencies[suspendId].totalTimeInStateMs = static_cast<int64_t>(suspendMs);
-            }
-        }
-    }
-
-    results->emplace("GPU", std::move(residencies));
     return true;
 }
 
-}  // namespace stats
-}  // namespace power
+bool GpuStateResidencyDataProvider::getResults(
+    std::unordered_map<uint32_t, PowerEntityStateResidencyResult> &results) {
+    // gpu_clock_stats reports time spent at each frequency level in milliseconds
+    uint64_t totalActiveTimeMs = 0;
+    if (!getTotalTime("/sys/class/kgsl/kgsl-3d0/gpu_clock_stats", totalActiveTimeMs)) {
+        LOG(ERROR) << __func__ << "Failed to get results for GPU:Active";
+        return false;
+    }
+
+    // suspend_time reports total GPU suspend duration in milliseconds
+    uint64_t totalSuspendTimeMs = 0;
+    if (!getTotalTime("/sys/class/kgsl/kgsl-3d0/devfreq/suspend_time", totalSuspendTimeMs)) {
+        LOG(ERROR) << __func__ << "Failed to get results for GPU:Suspend";
+        return false;
+    }
+
+    PowerEntityStateResidencyResult result = {
+        .powerEntityId = mPowerEntityId,
+        .stateResidencyData = {
+            {.powerEntityStateId = mActiveId,  .totalTimeInStateMs = totalActiveTimeMs},
+            {.powerEntityStateId = mSuspendId, .totalTimeInStateMs = totalSuspendTimeMs},
+        }};
+
+    results.emplace(std::make_pair(mPowerEntityId, result));
+    return true;
+}
+
+std::vector<PowerEntityStateSpace> GpuStateResidencyDataProvider::getStateSpaces() {
+    return {{.powerEntityId = mPowerEntityId,
+             .states = {
+                 {.powerEntityStateId = mActiveId,  .powerEntityStateName = "Active"},
+                 {.powerEntityStateId = mSuspendId, .powerEntityStateName = "Suspend"},
+             }}};
+}
+
+}  // namespace powerstats
+}  // namespace pixel
+}  // namespace google
 }  // namespace hardware
 }  // namespace android
-}  // namespace aidl

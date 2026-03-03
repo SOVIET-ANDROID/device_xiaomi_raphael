@@ -1,7 +1,8 @@
 <manifest version="1.0" type="device">
-    <hal format="aidl">
+    <hal format="hidl">
         <name>android.hardware.power.stats</name>
-        <version>2</version>
+        <transport>hwbinder</transport>
+        <version>1.0</version>
         <interface>
             <name>IPowerStats</name>
             <instance>default</instance>

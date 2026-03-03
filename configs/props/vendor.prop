@@ -105,7 +105,6 @@ persist.vendor.qcom.bluetooth.scram.enabled=true
 persist.vendor.qcom.bluetooth.soc=cherokee
 persist.vendor.qcom.bluetooth.twsp_state.enabled=false
 ro.bluetooth.a2dp_offload.supported=true
-ro.bluetooth.powerstats.disable=true
 vendor.qcom.bluetooth.soc=cherokee
 
 # Camera

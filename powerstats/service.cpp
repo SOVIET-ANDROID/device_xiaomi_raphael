@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 The Android Open Source Project
+ * Copyright (C) 2018 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,237 +14,134 @@
  * limitations under the License.
  */
 
-// PowerStats AIDL V2 HAL service for Xiaomi Raphael (Redmi K20 Pro / Mi 9T Pro)
-// Snapdragon 855 (SM8150) — Adreno 640
-//
-// Migrated from android.hardware.power.stats@1.0 (HIDL) to
-// android.hardware.power.stats AIDL V2, removing all dependency on
-// hardware/google/pixel/powerstats (libpixelpowerstats).
-//
-// Entities registered:
-//   RPMH:  APSS, MPSS, ADSP, CDSP, SLPI, SLPI_ISLAND  — Sleep state
-//   SoC:   AOSD, CXSD                                  — system-sleep stats
-//   GPU:   per-frequency bins + Suspend                 — Adreno 640
-//   Display: Off, 60Hz, 90Hz                           — DSI/backlight polling
-//
-// Energy consumers registered:
-//   Display (DISPLAY type) — Off/60Hz/90Hz mW coefficients
-//   GPU     (OTHER type)   — per-frequency mW coefficients (both SKUs handled
-//                            at runtime because GpuStateResidencyDataProvider
-//                            reads the actual freq table from sysfs)
-//   SoC     (OTHER type)   — AOSD/CXSD mW coefficients
+#define LOG_TAG "android.hardware.power.stats@1.0-service.raphael"
 
-#define LOG_TAG "android.hardware.power.stats-service.raphael"
+#include <android/log.h>
+#include <binder/IPCThreadState.h>
+#include <binder/IServiceManager.h>
+#include <binder/ProcessState.h>
+#include <hidl/HidlTransportSupport.h>
+#include <pixelpowerstats/AidlStateResidencyDataProvider.h>
+#include <pixelpowerstats/GenericStateResidencyDataProvider.h>
+#include <pixelpowerstats/PowerStats.h>
 
-#include "PowerStats.h"
-#include "PowerStatsEnergyConsumer.h"
-#include "GenericStateResidencyDataProvider.h"
 #include "GpuStateResidencyDataProvider.h"
-#include "DisplayStateResidencyDataProvider.h"
 
-#include <android-base/logging.h>
-#include <android/binder_manager.h>
-#include <android/binder_process.h>
+using android::OK;
+using android::sp;
+using android::status_t;
 
-using aidl::android::hardware::power::stats::DisplayStateResidencyDataProvider;
-using aidl::android::hardware::power::stats::EnergyConsumerType;
-using aidl::android::hardware::power::stats::GenericStateResidencyDataProvider;
-using aidl::android::hardware::power::stats::GpuStateResidencyDataProvider;
-using aidl::android::hardware::power::stats::PowerStats;
-using aidl::android::hardware::power::stats::PowerStatsEnergyConsumer;
-using aidl::android::hardware::power::stats::StateResidencyConfig;
+// libhwbinder:
+using android::hardware::configureRpcThreadpool;
+using android::hardware::joinRpcThreadpool;
 
-// ---------------------------------------------------------------------------
-// RPMH subsystem sleep stats
-//   Source: /sys/power/rpmh_stats/master_stats
-//   Clock:  19.2 MHz — divide raw ticks by 19200 to get milliseconds.
-// ---------------------------------------------------------------------------
-static void addRpmhStats(std::shared_ptr<PowerStats> service) {
-    const uint64_t RPM_CLK = 19200;
-    auto toMs = [](uint64_t a) { return a / RPM_CLK; };
+// Generated HIDL files
+using android::hardware::power::stats::V1_0::IPowerStats;
+using android::hardware::power::stats::V1_0::PowerEntityType;
+using android::hardware::power::stats::V1_0::implementation::PowerStats;
 
-    const std::vector<StateResidencyConfig> sleepConfig = {{
-        .name                = "Sleep",
+// Pixel specific
+using android::hardware::google::pixel::powerstats::AidlStateResidencyDataProvider;
+using android::hardware::google::pixel::powerstats::generateGenericStateResidencyConfigs;
+using android::hardware::google::pixel::powerstats::GenericStateResidencyDataProvider;
+using android::hardware::google::pixel::powerstats::GpuStateResidencyDataProvider;
+using android::hardware::google::pixel::powerstats::PowerEntityConfig;
+using android::hardware::google::pixel::powerstats::StateResidencyConfig;
+
+int main(int /* argc */, char** /* argv */) {
+    ALOGI("power.stats service 1.0 is starting.");
+
+    PowerStats* service = new PowerStats();
+
+    // Add power entities related to rpmh
+    const uint64_t RPM_CLK = 19200;  // RPM runs at 19.2Mhz. Divide by 19200 for msec
+    std::function<uint64_t(uint64_t)> rpmConvertToMs = [](uint64_t a) { return a / RPM_CLK; };
+    std::vector<StateResidencyConfig> rpmStateResidencyConfigs = {
+        {.name = "Sleep",
+         .entryCountSupported = true,
+         .entryCountPrefix = "Sleep Count:",
+         .totalTimeSupported = true,
+         .totalTimePrefix = "Sleep Accumulated Duration:",
+         .totalTimeTransform = rpmConvertToMs,
+         .lastEntrySupported = true,
+         .lastEntryPrefix = "Sleep Last Entered At:",
+         .lastEntryTransform = rpmConvertToMs}};
+
+    sp<GenericStateResidencyDataProvider> rpmSdp =
+            new GenericStateResidencyDataProvider("/sys/power/rpmh_stats/master_stats");
+
+    uint32_t apssId = service->addPowerEntity("APSS", PowerEntityType::SUBSYSTEM);
+    rpmSdp->addEntity(apssId, PowerEntityConfig("APSS", rpmStateResidencyConfigs));
+
+    uint32_t mpssId = service->addPowerEntity("MPSS", PowerEntityType::SUBSYSTEM);
+    rpmSdp->addEntity(mpssId, PowerEntityConfig("MPSS", rpmStateResidencyConfigs));
+
+    uint32_t adspId = service->addPowerEntity("ADSP", PowerEntityType::SUBSYSTEM);
+    rpmSdp->addEntity(adspId, PowerEntityConfig("ADSP", rpmStateResidencyConfigs));
+
+    uint32_t cdspId = service->addPowerEntity("CDSP", PowerEntityType::SUBSYSTEM);
+    rpmSdp->addEntity(cdspId, PowerEntityConfig("CDSP", rpmStateResidencyConfigs));
+
+    uint32_t slpiId = service->addPowerEntity("SLPI", PowerEntityType::SUBSYSTEM);
+    rpmSdp->addEntity(slpiId, PowerEntityConfig("SLPI", rpmStateResidencyConfigs));
+
+    uint32_t slpiIslandId = service->addPowerEntity("SLPI_ISLAND", PowerEntityType::SUBSYSTEM);
+    rpmSdp->addEntity(slpiIslandId, PowerEntityConfig("SLPI_ISLAND", {
+        {.name = "uImage",
+         .entryCountSupported = true,
+         .entryCountPrefix = "Sleep Count:",
+         .totalTimeSupported = true,
+         .totalTimePrefix = "Sleep Accumulated Duration:",
+         .totalTimeTransform = rpmConvertToMs,
+         .lastEntrySupported = true,
+         .lastEntryPrefix = "Sleep Last Entered At:",
+         .lastEntryTransform = rpmConvertToMs}}));
+
+    service->addStateResidencyDataProvider(rpmSdp);
+
+    // Add SoC power entity
+    StateResidencyConfig socStateConfig = {
         .entryCountSupported = true,
-        .entryCountPrefix    = "Sleep Count:",
-        .totalTimeSupported  = true,
-        .totalTimePrefix     = "Sleep Accumulated Duration:",
-        .totalTimeTransform  = toMs,
-        .lastEntrySupported  = true,
-        .lastEntryPrefix     = "Sleep Last Entered At:",
-        .lastEntryTransform  = toMs,
-    }};
-
-    auto sdp = std::make_unique<GenericStateResidencyDataProvider>(
-            "/sys/power/rpmh_stats/master_stats");
-
-    sdp->addEntity("APSS",        sleepConfig);
-    sdp->addEntity("MPSS",        sleepConfig);
-    sdp->addEntity("ADSP",        sleepConfig);
-    sdp->addEntity("CDSP",        sleepConfig);
-    sdp->addEntity("SLPI",        sleepConfig);
-
-    // SLPI_ISLAND uses a different state name ("uImage") but the same prefixes.
-    const std::vector<StateResidencyConfig> islandConfig = {{
-        .name                = "uImage",
-        .entryCountSupported = true,
-        .entryCountPrefix    = "Sleep Count:",
-        .totalTimeSupported  = true,
-        .totalTimePrefix     = "Sleep Accumulated Duration:",
-        .totalTimeTransform  = toMs,
-        .lastEntrySupported  = true,
-        .lastEntryPrefix     = "Sleep Last Entered At:",
-        .lastEntryTransform  = toMs,
-    }};
-    sdp->addEntity("SLPI_ISLAND", islandConfig);
-
-    service->addStateResidencyDataProvider(std::move(sdp));
-}
-
-// ---------------------------------------------------------------------------
-// SoC-level sleep stats (AOSD / CXSD)
-//   Source: /sys/power/system_sleep/stats
-//
-//   Kernel output format (per RPM mode):
-//     RPM Mode:aosd
-//     count: <N>
-//     actual last sleep(msec): <T>
-//     RPM Mode:cxsd
-//     ...
-//
-//   totalTimePrefix matches "actual last sleep(msec):" which is cumulative
-//   sleep time in milliseconds (already in ms — no transform needed).
-//   lastEntry is not available in this node.
-// ---------------------------------------------------------------------------
-static void addSocStats(std::shared_ptr<PowerStats> service) {
-    const std::vector<StateResidencyConfig> socConfigs = {
-        {
-            .name                = "AOSD",
-            .header              = "RPM Mode:aosd",
-            .entryCountSupported = true,
-            .entryCountPrefix    = "count:",
-            .totalTimeSupported  = true,
-            .totalTimePrefix     = "actual last sleep(msec):",
-            .lastEntrySupported  = false,
-        },
-        {
-            .name                = "CXSD",
-            .header              = "RPM Mode:cxsd",
-            .entryCountSupported = true,
-            .entryCountPrefix    = "count:",
-            .totalTimeSupported  = true,
-            .totalTimePrefix     = "actual last sleep(msec):",
-            .lastEntrySupported  = false,
-        },
+        .entryCountPrefix = "count:",
+        .totalTimeSupported = true,
+        .totalTimePrefix = "actual last sleep(msec):",
+        .lastEntrySupported = false
+    };
+    std::vector<std::pair<std::string, std::string>> socStateHeaders = {
+        std::make_pair("AOSD", "RPM Mode:aosd"),
+        std::make_pair("CXSD", "RPM Mode:cxsd"),
     };
 
-    auto sdp = std::make_unique<GenericStateResidencyDataProvider>(
-            "/sys/power/system_sleep/stats");
-    sdp->addEntity("SoC", socConfigs);
+    sp<GenericStateResidencyDataProvider> socSdp =
+            new GenericStateResidencyDataProvider("/sys/power/system_sleep/stats");
 
-    service->addStateResidencyDataProvider(std::move(sdp));
-}
+    uint32_t socId = service->addPowerEntity("SoC", PowerEntityType::POWER_DOMAIN);
+    socSdp->addEntity(socId,
+        PowerEntityConfig(generateGenericStateResidencyConfigs(socStateConfig, socStateHeaders)));
 
-// ---------------------------------------------------------------------------
-// main
-// ---------------------------------------------------------------------------
-int main() {
-    // Use at least 1 binder thread so the service can handle concurrent calls
-    // and linkToDeath works correctly.  0 threads causes a framework warning
-    // and prevents proper client death notification.
-    ABinderProcess_setThreadPoolMaxThreadCount(1);
+    service->addStateResidencyDataProvider(socSdp);
 
-    auto service = ndk::SharedRefBase::make<PowerStats>();
+    // Add GPU power entity
+    uint32_t gpuId = service->addPowerEntity("GPU", PowerEntityType::SUBSYSTEM);
+    sp<GpuStateResidencyDataProvider> gpuSdp = new GpuStateResidencyDataProvider(gpuId);
+    service->addStateResidencyDataProvider(gpuSdp);
 
-    // ---- State residency data providers ----
-    addRpmhStats(service);
-    addSocStats(service);
+    sp<android::ProcessState> ps{android::ProcessState::self()};  // Create non-HW binder threadpool
+    ps->startThreadPool();
 
-    // GPU — GpuStateResidencyDataProvider reads the actual frequency table
-    // from sysfs at construction, so it handles both SKUs automatically:
-    //   SKU 0 (speed-bin=0): 770, 715, 615, 515, 340 MHz
-    //   SKU 1 (speed-bin=1): 692, 675, 615, 515, 340 MHz
-    service->addStateResidencyDataProvider(
-            std::make_unique<GpuStateResidencyDataProvider>());
+    // Configure the threadpool
+    configureRpcThreadpool(1, true /*callerWillJoin*/);
 
-    // Display — monitors bl_power via Looper + reads DSI clock for 60/90Hz.
-    service->addStateResidencyDataProvider(
-            std::make_unique<DisplayStateResidencyDataProvider>(
-                    "/sys/class/backlight/panel0-backlight/bl_power",
-                    "/sys/devices/platform/soc/soc:qcom,dsi-display-primary/"
-                    "dynamic_dsi_clock"));
-
-    // ---- Energy consumers ----
-    //
-    // Display (DISPLAY type)
-    //   Measured panel power at 60 Hz ≈ 776 mW.
-    //   90 Hz scaled by DSI clock ratio: 776 × (1300/1100) ≈ 916 mW.
-    //   (Conservative estimate; exact value depends on content brightness.)
-    service->addEnergyConsumer(std::make_unique<PowerStatsEnergyConsumer>(
-            service,
-            EnergyConsumerType::DISPLAY,
-            "display",
-            "Display",
-            std::map<std::string, int32_t>{
-                {"Off",   0},
-                {"60Hz",  776},
-                {"90Hz",  916},
-            }));
-
-    // GPU (OTHER type)
-    //   Power coefficients from Adreno 640 vendor corner data (4.14 kernel).
-    //   States whose names match GpuStateResidencyDataProvider output are used;
-    //   any freq bin absent on a given SKU simply contributes 0 energy.
-    //   Both SKU tables share 615/515/340 MHz, so those entries always match.
-    service->addEnergyConsumer(std::make_unique<PowerStatsEnergyConsumer>(
-            service,
-            EnergyConsumerType::OTHER,
-            "gpu",
-            "GPU",
-            std::map<std::string, int32_t>{
-                // SKU 0 exclusive
-                {"770MHz",   1060},
-                {"715MHz",    720},
-                // SKU 1 exclusive
-                {"692MHz",    820},
-                {"675MHz",    760},
-                // Shared across both SKUs
-                {"615MHz",    480},
-                {"515MHz",    270},
-                {"340MHz",     90},
-                {"Suspend",     0},
-            }));
-
-    // SoC (OTHER type)
-    //   Based on ~5.4 mA idle current at 3.85 V nominal ≈ 21 mW during deep sleep.
-    //   AOSD and CXSD represent different SoC idle rail states but share a similar
-    //   static power floor at this granularity.
-    service->addEnergyConsumer(std::make_unique<PowerStatsEnergyConsumer>(
-            service,
-            EnergyConsumerType::OTHER,
-            "soc",
-            "SoC",
-            std::map<std::string, int32_t>{
-                {"AOSD", 21},
-                {"CXSD", 21},
-            }));
-
-    // ---- Register with servicemanager and join thread pool ----
-    const std::string instance =
-            std::string(PowerStats::descriptor) + "/default";
-
-    binder_status_t status =
-            AServiceManager_addService(service->asBinder().get(), instance.c_str());
-    if (status != STATUS_OK) {
-        LOG(FATAL) << "Failed to register " << instance << " (status=" << status << ")";
-        return EXIT_FAILURE;
+    status_t status = service->registerAsService();
+    if (status != OK) {
+        ALOGE("Could not register service for power.stats HAL Iface (%d), exiting.", status);
+        return 1;
     }
 
-    LOG(INFO) << "android.hardware.power.stats-service.raphael is ready.";
+    ALOGI("power.stats service is ready");
+    joinRpcThreadpool();
 
-    ABinderProcess_joinThreadPool();
-
-    // Should never be reached.
-    LOG(FATAL) << "android.hardware.power.stats-service.raphael thread pool exited.";
-    return EXIT_FAILURE;
+    // In normal operation, we don't expect the thread pool to exit
+    ALOGE("power.stats service is shutting down");
+    return 1;
 }
