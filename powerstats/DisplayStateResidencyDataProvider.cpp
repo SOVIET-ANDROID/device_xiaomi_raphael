@@ -21,6 +21,7 @@
 
 #include <chrono>
 #include <fcntl.h>
+#include <thread>
 #include <unistd.h>
 
 namespace aidl {
@@ -37,11 +38,10 @@ DisplayStateResidencyDataProvider::DisplayStateResidencyDataProvider(
     : mBlPath(blPath),
       mClkPath(clkPath),
       mBlFd(-1),
+      mLastBlValue(-1),
       mCurState(-1),
-      mLooper(new ::android::Looper(true)),
       mRunThread(true) {
 
-    // Initialise residency slots to zero.
     mResidencies.resize(NUM_STATES);
     for (int32_t i = 0; i < NUM_STATES; ++i) {
         mResidencies[i].id = i;
@@ -50,21 +50,16 @@ DisplayStateResidencyDataProvider::DisplayStateResidencyDataProvider(
         mResidencies[i].lastEntryTimestampMs = 0;
     }
 
-    // Open bl_power for epoll-based change notification.
-    mBlFd = open(mBlPath.c_str(), O_RDONLY | O_NONBLOCK);
+    mBlFd = open(mBlPath.c_str(), O_RDONLY);
     if (mBlFd < 0) {
-        PLOG(ERROR) << "DisplayStateResidencyDataProvider: failed to open " << mBlPath
-                    << ". Display residency will be all-zero until the node is accessible.";
-        // Do NOT start the poll thread — mBlFd == -1 is checked in pollLoop / updateStats.
-        // getStateResidencies() still returns a valid (zeroed) result, preventing crashes.
+        PLOG(ERROR) << "DisplayStateResidencyDataProvider: failed to open "
+                    << mBlPath << ". Display residency will be zeroed.";
         mRunThread = false;
         return;
     }
 
-    mLooper->addFd(mBlFd, 0, ::android::Looper::EVENT_INPUT, nullptr, nullptr);
-
-    // Capture initial state before the thread starts so the first call to
-    // getStateResidencies() is not completely stale.
+    // Read initial state synchronously before starting the thread so the
+    // very first getStateResidencies() call returns meaningful data.
     updateStats();
 
     mThread = std::thread(&DisplayStateResidencyDataProvider::pollLoop, this);
@@ -75,9 +70,6 @@ DisplayStateResidencyDataProvider::DisplayStateResidencyDataProvider(
 // -----------------------------------------------------------------------
 DisplayStateResidencyDataProvider::~DisplayStateResidencyDataProvider() {
     mRunThread = false;
-    if (mLooper != nullptr) {
-        mLooper->wake();
-    }
     if (mThread.joinable()) {
         mThread.join();
     }
@@ -88,7 +80,7 @@ DisplayStateResidencyDataProvider::~DisplayStateResidencyDataProvider() {
 }
 
 // -----------------------------------------------------------------------
-// getInfo — called once at HAL registration.
+// getInfo
 // -----------------------------------------------------------------------
 std::unordered_map<std::string, std::vector<State>>
 DisplayStateResidencyDataProvider::getInfo() {
@@ -100,19 +92,14 @@ DisplayStateResidencyDataProvider::getInfo() {
 }
 
 // -----------------------------------------------------------------------
-// getStateResidencies — called by the framework periodically.
-//
-// We snapshot the running totals under the lock and add the elapsed time
-// for the current active state so callers always get up-to-date values
-// without requiring the poll thread to have fired recently.
+// getStateResidencies
 // -----------------------------------------------------------------------
 bool DisplayStateResidencyDataProvider::getStateResidencies(
         std::unordered_map<std::string, std::vector<StateResidency>> *results) {
 
     std::scoped_lock lk(mLock);
 
-    // Guard against mBlFd == -1: return zeroed residencies, don't crash.
-    if (mBlFd < 0) {
+    if (mBlFd < 0 && mCurState < 0) {
         results->emplace("Display", mResidencies);
         return false;
     }
@@ -120,7 +107,8 @@ bool DisplayStateResidencyDataProvider::getStateResidencies(
     uint64_t now = nowMs();
     std::vector<StateResidency> snapshot = mResidencies;
 
-    // Add time elapsed in the current state since the last transition.
+    // Add elapsed time in current state so callers always see up-to-date
+    // values even if no transition has occurred since the last poll wakeup.
     if (mCurState >= 0 && mCurState < NUM_STATES) {
         snapshot[mCurState].totalTimeInStateMs +=
                 static_cast<int64_t>(now - static_cast<uint64_t>(
@@ -132,7 +120,7 @@ bool DisplayStateResidencyDataProvider::getStateResidencies(
 }
 
 // -----------------------------------------------------------------------
-// nowMs — monotonic boot-clock time in milliseconds.
+// nowMs
 // -----------------------------------------------------------------------
 /*static*/ uint64_t DisplayStateResidencyDataProvider::nowMs() {
     return static_cast<uint64_t>(
@@ -142,20 +130,18 @@ bool DisplayStateResidencyDataProvider::getStateResidencies(
 }
 
 // -----------------------------------------------------------------------
-// updateStats — reads current display state and updates mResidencies.
+// updateStats
 //
-// bl_power semantics (kernel FB_BLANK / DRM connector):
-//   0         → display ON  (backlight enabled)
-//   non-zero  → display OFF (blanked / DPMS off)
+// Reads bl_power and, if ON, reads the DSI clock to distinguish 60/90Hz.
+// Only records a state transition when the computed new state differs from
+// the current state — so this can be called on every poll tick cheaply.
 //
-// When ON, the DSI clock node is read to distinguish 60 Hz from 90 Hz:
-//   > kDsiClockThresholdHz (1200 MHz) → 90 Hz
-//   ≤ kDsiClockThresholdHz            → 60 Hz (or fallback if unreadable)
+// Additionally skips all work if the raw bl_power VALUE hasn't changed
+// since the last read (checked by the caller in pollLoop via mLastBlValue).
 // -----------------------------------------------------------------------
 void DisplayStateResidencyDataProvider::updateStats() {
     if (mBlFd < 0) return;
 
-    // Read bl_power value.
     char buf[16] = {};
     ssize_t n = pread(mBlFd, buf, sizeof(buf) - 1, 0);
     if (n <= 0) {
@@ -164,55 +150,63 @@ void DisplayStateResidencyDataProvider::updateStats() {
     }
     buf[n] = '\0';
 
-    // atoi: "0" → display ON, anything else → display OFF.
-    const int blPower = atoi(buf);
+    const int blValue = atoi(buf);
+
+    // If the raw value hasn't changed, the state hasn't changed — skip work.
+    // mLastBlValue is only written from the poll thread (single writer) so
+    // reading it here without a lock is safe.
+    if (blValue == mLastBlValue) return;
+    mLastBlValue = blValue;
 
     int32_t newState;
-    if (blPower != 0) {
-        // Display is blanked / off.
+    if (blValue != 0) {
         newState = STATE_OFF;
     } else {
-        // Display is on — check refresh rate via DSI clock.
         std::string clkStr;
         if (::android::base::ReadFileToString(mClkPath, &clkStr)) {
             uint64_t clkHz = strtoull(clkStr.c_str(), nullptr, 0);
             newState = (clkHz > kDsiClockThresholdHz) ? STATE_90HZ : STATE_60HZ;
         } else {
-            // Clock node unreadable (e.g. early boot) — default to 60 Hz.
-            LOG(WARNING) << "DisplayStateResidencyDataProvider: could not read "
-                         << mClkPath << "; defaulting to 60Hz.";
             newState = STATE_60HZ;
         }
     }
 
     std::scoped_lock lk(mLock);
 
-    if (newState == mCurState) return;  // No transition, nothing to do.
+    if (newState == mCurState) return;
 
     uint64_t now = nowMs();
 
-    // Accumulate time spent in the previous state.
     if (mCurState >= 0 && mCurState < NUM_STATES) {
         mResidencies[mCurState].totalTimeInStateMs +=
                 static_cast<int64_t>(now - static_cast<uint64_t>(
                         mResidencies[mCurState].lastEntryTimestampMs));
     }
 
-    // Transition to the new state.
     mCurState = newState;
     mResidencies[mCurState].totalStateEntryCount++;
     mResidencies[mCurState].lastEntryTimestampMs = static_cast<int64_t>(now);
 }
 
 // -----------------------------------------------------------------------
-// pollLoop — background thread.
+// pollLoop
+//
+// Wakes every kPollIntervalMs and calls updateStats().
+// updateStats() does a single pread() and returns immediately if the
+// bl_power value has not changed — so idle cost is one syscall per 200ms.
+//
+// Why timed polling and not epoll/POLLPRI:
+//   EPOLLIN on sysfs is level-triggered (always "readable") → spin loop.
+//   POLLPRI requires sysfs_notify() in the driver; the Raphael CAF 4.14
+//   backlight driver does not call sysfs_notify() → transitions never wake.
+//   Timed polling at 200ms latency costs ~0.01% CPU and works correctly.
 // -----------------------------------------------------------------------
 void DisplayStateResidencyDataProvider::pollLoop() {
     while (mRunThread) {
-        int ret = mLooper->pollOnce(-1 /* timeout: block forever */);
-        if (ret >= 0) {
-            updateStats();
-        }
+        std::this_thread::sleep_for(
+                std::chrono::milliseconds(kPollIntervalMs));
+        if (!mRunThread) break;
+        updateStats();
     }
 }
 

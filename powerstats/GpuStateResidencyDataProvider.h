@@ -1,73 +1,36 @@
 /*
  * Copyright (C) 2021 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
-
 #pragma once
-
 #include "IStateResidencyDataProvider.h"
-
+#include <cstdint>
 #include <string>
 #include <unordered_map>
 #include <vector>
+namespace aidl::android::hardware::power::stats {
 
-namespace aidl {
-namespace android {
-namespace hardware {
-namespace power {
-namespace stats {
-
-// Provides per-frequency-bin + suspend state residency for the Adreno 640 GPU
-// (Snapdragon 855, Xiaomi Raphael / Redmi K20 Pro).
+// Per-frequency + suspend residency for Adreno 640 (Snapdragon 855, Raphael).
 //
-// Two SKU frequency tables exist in the device tree:
-//   SKU 0 (speed-bin=0): 770, 715, 615, 515, 340 MHz
-//   SKU 1 (speed-bin=1): 692, 675, 615, 515, 340 MHz
+// SKUs:  0 → 770/715/615/515/340 MHz
+//        1 → 692/675/615/515/340 MHz
 //
-// The kernel exports the active frequency list at runtime via:
-//   /sys/class/kgsl/kgsl-3d0/gpu_available_frequencies
-// The 0 Hz entry (off placeholder) is intentionally excluded from states.
-//
-// Residency data comes from:
-//   /sys/class/kgsl/kgsl-3d0/gpu_clock_stats   — time in ms per active freq bin
-//   /sys/class/kgsl/kgsl-3d0/devfreq/suspend_time — total GPU suspend time in ms
-//
-// The frequency list is cached at construction time to guarantee that the
-// state IDs returned by getInfo() always match those from getStateResidencies().
-// A hardcoded SKU-0 fallback is used if the sysfs node is unavailable at init.
+// gpu_clock_stats and suspend_time are monotonic since kernel boot.
+// A baseline is captured at construction; all returned values are deltas
+// so BatteryStats always sees time-since-HAL-start, not cross-boot totals.
 class GpuStateResidencyDataProvider : public IStateResidencyDataProvider {
-  public:
+public:
     GpuStateResidencyDataProvider();
     ~GpuStateResidencyDataProvider() = default;
-
     bool getStateResidencies(
-            std::unordered_map<std::string, std::vector<StateResidency>> *results) override;
-    std::unordered_map<std::string, std::vector<State>> getInfo() override;
-
-  private:
-    // Reads /sys/class/kgsl/kgsl-3d0/gpu_available_frequencies, strips the 0 Hz
-    // placeholder, and returns frequencies in MHz (high-to-low, matching clock_stats order).
+            std::unordered_map<std::string,std::vector<StateResidency>>*) override;
+    std::unordered_map<std::string,std::vector<State>> getInfo() override;
+private:
     static std::vector<uint32_t> readAvailableFrequenciesMhz();
+    bool readClockStats(std::vector<uint64_t>&) const;
+    uint64_t readSuspendTime() const;
 
-    // Frequencies in MHz, high-to-low, cached at construction.
-    // Index N in mFrequencies corresponds to state ID N.
-    // State ID mFrequencies.size() is always "Suspend".
-    std::vector<uint32_t> mFrequencies;
+    std::vector<uint32_t> mFrequencies;   // MHz, high-to-low
+    std::vector<uint64_t> mBaselineMs;    // [0..N-1]=freq baselines, [N]=suspend baseline
 };
-
-}  // namespace stats
-}  // namespace power
-}  // namespace hardware
-}  // namespace android
-}  // namespace aidl
+} // namespace

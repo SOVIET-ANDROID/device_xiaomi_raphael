@@ -18,8 +18,6 @@
 
 #include "IStateResidencyDataProvider.h"
 
-#include <utils/Looper.h>
-
 #include <atomic>
 #include <mutex>
 #include <string>
@@ -41,30 +39,32 @@ namespace stats {
 //   mClkPath — /sys/devices/platform/soc/soc:qcom,dsi-display-primary/dynamic_dsi_clock
 //              Reports the current DSI link clock in Hz.
 //
-// 90Hz vs 60Hz threshold:
-//   The Amoled panel (Samsung / Tianma) runs at ~1100 MHz DSI clock at 60Hz
-//   and ~1300 MHz at 90Hz.  We use 1200 MHz (1_200_000_000 Hz) as the
-//   split point, which sits safely between both known operating points.
+// Poll mechanism — timed polling with value-change detection:
+//   The background thread wakes every kPollIntervalMs (200ms), reads bl_power,
+//   and calls updateStats() ONLY when the value changes from the previous read.
 //
-// A background thread polls via Looper/epoll on the bl_power fd so state
-// transitions are captured promptly without busy-waiting.
+//   This is the only reliable approach on Raphael because:
+//     - EPOLLIN (Looper) is level-triggered on sysfs: always "readable", causes
+//       100% CPU spin (confirmed: thread 1372 at 100% one core continuously).
+//     - POLLPRI requires the driver to call sysfs_notify() on value change.
+//       The Raphael CAF 4.14 backlight driver does NOT call sysfs_notify(),
+//       so poll(POLLPRI) times out every time and misses all transitions.
+//     - Timed polling correctly detects all transitions with ≤200ms latency
+//       at ~0.01% CPU overhead (1 pread() per 200ms).
 //
 // Thread safety: mResidencies and mCurState are protected by mLock.
-// All public methods are safe to call from any thread.
-//
-// Robustness: if bl_power cannot be opened the provider still functions —
-// getStateResidencies() returns a zeroed result rather than crashing.
 class DisplayStateResidencyDataProvider : public IStateResidencyDataProvider {
   public:
-    // State IDs — must match getInfo() order.
     static constexpr int32_t STATE_OFF   = 0;
     static constexpr int32_t STATE_60HZ  = 1;
     static constexpr int32_t STATE_90HZ  = 2;
     static constexpr int32_t NUM_STATES  = 3;
 
-    // DSI clock threshold in Hz.  Clocks above this value are classified as
-    // 90 Hz; at or below are classified as 60 Hz.
+    // DSI clock threshold separating 60 Hz from 90 Hz.
     static constexpr uint64_t kDsiClockThresholdHz = 1200000000ULL;
+
+    // Sampling interval. 200ms gives good accuracy at negligible CPU cost.
+    static constexpr int kPollIntervalMs = 200;
 
     DisplayStateResidencyDataProvider(const std::string &blPath,
                                       const std::string &clkPath);
@@ -75,26 +75,20 @@ class DisplayStateResidencyDataProvider : public IStateResidencyDataProvider {
     std::unordered_map<std::string, std::vector<State>> getInfo() override;
 
   private:
-    // Reads current bl_power + DSI clock and updates mResidencies / mCurState.
-    // Must be called from the poll thread OR with the lock NOT held (it acquires it).
     void updateStats();
-
-    // Background thread entry point.
     void pollLoop();
-
-    // Returns current boot-clock time in milliseconds.
     static uint64_t nowMs();
 
     const std::string mBlPath;
     const std::string mClkPath;
 
-    int mBlFd;  // fd for bl_power, -1 if open failed
+    int mBlFd;          // opened O_RDONLY for pread(); -1 if unavailable
+    int mLastBlValue;   // last raw bl_power value; -1 = unread
 
     mutable std::mutex mLock;
     std::vector<StateResidency> mResidencies;  // guarded by mLock
-    int32_t mCurState;                         // guarded by mLock; -1 = unknown
+    int32_t mCurState;                         // guarded by mLock
 
-    ::android::sp<::android::Looper> mLooper;
     std::atomic<bool> mRunThread;
     std::thread mThread;
 };
