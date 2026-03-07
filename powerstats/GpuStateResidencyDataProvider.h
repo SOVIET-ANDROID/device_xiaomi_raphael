@@ -1,51 +1,45 @@
 /*
- * Copyright (C) 2019 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright (C) 2021 The Android Open Source Project
+ * SPDX-License-Identifier: Apache-2.0
  */
-#ifndef HARDWARE_GOOGLE_PIXEL_POWERSTATS_GPUSTATERESIDENCYDATAPROVIDER_H
-#define HARDWARE_GOOGLE_PIXEL_POWERSTATS_GPUSTATERESIDENCYDATAPROVIDER_H
-
-#include <pixelpowerstats/PowerStats.h>
-
-using android::hardware::power::stats::V1_0::PowerEntityStateResidencyResult;
-using android::hardware::power::stats::V1_0::PowerEntityStateSpace;
-
+#pragma once
+#include "IStateResidencyDataProvider.h"
+#include <cstdint>
+#include <string>
+#include <unordered_map>
+#include <vector>
+namespace aidl {
 namespace android {
 namespace hardware {
-namespace google {
-namespace pixel {
-namespace powerstats {
+namespace power {
+namespace stats {
 
+// Per-frequency + suspend residency for Adreno 640 (Snapdragon 855, Raphael).
+//
+// SKUs:  0 → 770/715/615/515/340 MHz
+//        1 → 692/675/615/515/340 MHz
+//
+// gpu_clock_stats and suspend_time are monotonic since kernel boot.
+// A baseline is captured at construction; all returned values are deltas
+// so BatteryStats always sees time-since-HAL-start, not cross-boot totals.
 class GpuStateResidencyDataProvider : public IStateResidencyDataProvider {
-  public:
-    GpuStateResidencyDataProvider(uint32_t id);
+public:
+    GpuStateResidencyDataProvider();
     ~GpuStateResidencyDataProvider() = default;
-    bool getResults(
-            std::unordered_map<uint32_t, PowerEntityStateResidencyResult> &results) override;
-    std::vector<PowerEntityStateSpace> getStateSpaces() override;
+    bool getStateResidencies(
+            std::unordered_map<std::string,std::vector<StateResidency>>*) override;
+    std::unordered_map<std::string,std::vector<State>> getInfo() override;
+private:
+    static std::vector<uint32_t> readAvailableFrequenciesMhz();
+    bool readClockStats(std::vector<uint64_t>&) const;
+    uint64_t readSuspendTime() const;
 
-  private:
-    bool getTotalTime(const std::string &path, uint64_t &totalTimeMs);
-    const uint32_t mPowerEntityId;
-    const uint32_t mActiveId;
-    const uint32_t mSuspendId;
+    std::vector<uint32_t> mFrequencies;   // MHz, high-to-low
+    std::vector<uint64_t> mBaselineMs;    // [0..N-1]=freq baselines, [N]=suspend baseline
 };
 
-}  // namespace powerstats
-}  // namespace pixel
-}  // namespace google
+}  // namespace stats
+}  // namespace power
 }  // namespace hardware
 }  // namespace android
-
-#endif  // HARDWARE_GOOGLE_PIXEL_POWERSTATS_GPUSTATERESIDENCYDATAPROVIDER_H
+}  // namespace aidl

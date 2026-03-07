@@ -1,0 +1,4 @@
+service vendor.power.stats-service.raphael /vendor/bin/hw/android.hardware.power.stats-service.raphael
+    class hal
+    user system
+    group system
