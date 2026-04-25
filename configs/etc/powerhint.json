@@ -247,7 +247,7 @@
         "/sys/class/kgsl/kgsl-3d0/idle_timer"
       ],
       "Values": [
-        "10000",
+        "500",
         "58"
       ],
       "DefaultIndex": 1,
@@ -333,7 +333,7 @@
         "/dev/cpu_dma_latency"
       ],
       "Values": [
-        "2c",
+        "44",
         "64"
       ],
       "HoldFd": true
@@ -417,21 +417,9 @@
     },
     {
       "PowerHint": "INTERACTION",
-      "Node": "TAUClampBoost",
-      "Duration": 500,
-      "Value": "20"
-    },
-    {
-      "PowerHint": "INTERACTION",
-      "Node": "FGUClampBoost",
-      "Duration": 500,
-      "Value": "20"
-    },
-    {
-      "PowerHint": "INTERACTION",
-      "Node": "FWUClampBoost",
-      "Duration": 500,
-      "Value": "20"
+      "Node": "TAUClampLatency",
+      "Duration": 200,
+      "Value": "1"
     },
     {
       "PowerHint": "INTERACTION",
@@ -480,6 +468,12 @@
       "Node": "DisplayWakeup",
       "Duration": 60,
       "Value": "1"
+    },
+    {
+      "PowerHint": "DISPLAY_UPDATE_IMMINENT",
+      "Node": "PMQoSCpuDmaLatency",
+      "Duration": 60,
+      "Value": "44"
     },
     {
       "PowerHint": "DISPLAY_UPDATE_IMMINENT",
@@ -540,6 +534,12 @@
       "Value": "25"
     },
     {
+      "PowerHint": "DISPLAY_CHANGE",
+      "Node": "PMQoSCpuDmaLatency",
+      "Duration": 5000,
+      "Value": "44"
+    },
+    {
       "PowerHint": "LAUNCH",
       "Type": "EndHint",
       "Value": "DISABLE_TA_BOOST"
@@ -585,6 +585,12 @@
       "Node": "TAUClampBoost",
       "Duration": 3000,
       "Value": "40"
+    },
+    {
+      "PowerHint": "LAUNCH",
+      "Node": "TAUClampLatency",
+      "Duration": 3000,
+      "Value": "1"
     },
     {
       "PowerHint": "LAUNCH",
@@ -650,13 +656,13 @@
       "PowerHint": "LAUNCH",
       "Node": "GPUIdleTimer",
       "Duration": 3000,
-      "Value": "10000"
+      "Value": "500"
     },
     {
       "PowerHint": "LAUNCH",
       "Node": "PMQoSCpuDmaLatency",
       "Duration": 3000,
-      "Value": "2c"
+      "Value": "44"
     },
     {
       "PowerHint": "LAUNCH",
@@ -727,7 +733,7 @@
       "PowerHint": "SUSTAINED_PERFORMANCE",
       "Node": "GPUMaxFreq",
       "Duration": 0,
-      "Value": "3"
+      "Value": "2"
     },
     {
       "PowerHint": "SUSTAINED_PERFORMANCE",
@@ -769,13 +775,13 @@
       "PowerHint": "AUDIO_STREAMING_LOW_LATENCY",
       "Node": "PMQoSCpuDmaLatency",
       "Duration": 0,
-      "Value": "2c"
+      "Value": "44"
     },
     {
       "PowerHint": "AUDIO_LAUNCH",
       "Node": "PMQoSCpuDmaLatency",
       "Duration": 2000,
-      "Value": "2c"
+      "Value": "44"
     },
     {
       "PowerHint": "EXPENSIVE_RENDERING",
@@ -823,7 +829,7 @@
       "PowerHint": "ML_ACC",
       "Node": "PMQoSCpuDmaLatency",
       "Duration": 2000,
-      "Value": "2c"
+      "Value": "44"
     },
     {
       "PowerHint": "GAME_LOADING",
@@ -840,7 +846,7 @@
       "PowerHint": "GAME_LOADING",
       "Node": "PMQoSCpuDmaLatency",
       "Duration": 3000,
-      "Value": "2c"
+      "Value": "44"
     },
     {
       "PowerHint": "GAME_LOADING",
@@ -889,6 +895,8 @@
       "UclampMin_Init": 185,
       "UclampMin_High": 384,
       "UclampMin_Low": 2,
+      "UclampMax_EfficientBase": 500,
+      "UclampMax_EfficientOffset": 200,
       "UclampMin_LoadUp": 150,
       "UclampMin_LoadReset": 150,
       "SamplingWindow_P": 1,
@@ -896,7 +904,18 @@
       "SamplingWindow_D": 1,
       "ReportingRateLimitNs": 166666660,
       "TargetTimeFactor": 1.0,
-      "StaleTimeFactor": 20.0
+      "StaleTimeFactor": 15.0,
+      "GpuBoost": false,
+      "HeuristicBoost_On": true,
+      "HBoostModerateJankThreshold": 2,
+      "HBoostOffMaxAvgDurRatio": 4.0,
+      "HBoostSevereJankPidPu": 0.25,
+      "HBoostSevereJankThreshold": 8,
+      "HBoostUclampMinFloorRange": [230, 410],
+      "HBoostUclampMinCeilingRange": [480, 722],
+      "JankCheckTimeFactor": 1.2,
+      "LowFrameRateThreshold": 25,
+      "MaxRecordsNum": 300
     },
     {
       "Name": "SYSTEM_UI_PROFILE",
@@ -913,6 +932,8 @@
       "UclampMin_Init": 150,
       "UclampMin_High": 300,
       "UclampMin_Low": 2,
+      "UclampMax_EfficientBase": 500,
+      "UclampMax_EfficientOffset": 200,
       "UclampMin_LoadUp": 100,
       "UclampMin_LoadReset": 100,
       "SamplingWindow_P": 1,
@@ -920,7 +941,18 @@
       "SamplingWindow_D": 1,
       "ReportingRateLimitNs": 166666660,
       "TargetTimeFactor": 1.0,
-      "StaleTimeFactor": 20.0
+      "StaleTimeFactor": 15.0,
+      "GpuBoost": false,
+      "HeuristicBoost_On": true,
+      "HBoostModerateJankThreshold": 2,
+      "HBoostOffMaxAvgDurRatio": 4.0,
+      "HBoostSevereJankPidPu": 0.25,
+      "HBoostSevereJankThreshold": 8,
+      "HBoostUclampMinFloorRange": [230, 410],
+      "HBoostUclampMinCeilingRange": [480, 722],
+      "JankCheckTimeFactor": 1.2,
+      "LowFrameRateThreshold": 25,
+      "MaxRecordsNum": 300
     }
   ]
 }
