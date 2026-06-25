@@ -237,9 +237,6 @@ PRODUCT_PACKAGES += \
 
 $(call soong_config_set,qtimedia,disabled_ubwc,true)
 
-PRODUCT_PACKAGES += \
-    disable_configstore
-
 # HBM
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/etc/displayconfig/display_id_4630946693002713985.xml:$(TARGET_COPY_OUT_VENDOR)/etc/displayconfig/display_id_4630946693002713985.xml
