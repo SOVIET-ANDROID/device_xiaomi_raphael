@@ -233,6 +233,13 @@ on boot
     chown system system /sys/devices/platform/goodix_ts.0/single_tap_enabled
     chmod 0660 /sys/devices/platform/goodix_ts.0/single_tap_enabled
 
+    # Doze Brightness
+    chown system system /sys/devices/platform/soc/soc:qcom,dsi-display-primary/doze_mode
+    chmod 0660 /sys/devices/platform/soc/soc:qcom,dsi-display-primary/doze_mode
+
+    chown system system /sys/devices/platform/soc/soc:qcom,dsi-display-primary/doze_status
+    chmod 0660 /sys/devices/platform/soc/soc:qcom,dsi-display-primary/doze_status
+
 on post-fs-data
     # msm specific files that need to be created on /data
     mkdir /data/vendor/misc 01771 system system

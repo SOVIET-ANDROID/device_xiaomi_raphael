@@ -246,6 +246,10 @@ PRODUCT_PACKAGES += \
     android.hardware.drm@1.4.vendor \
     android.hardware.drm-service.clearkey
 
+# Doze
+PRODUCT_PACKAGES += \
+     XiaomiDoze
+
 # F2FS
 PRODUCT_PACKAGES += \
     sg_write_buffer \

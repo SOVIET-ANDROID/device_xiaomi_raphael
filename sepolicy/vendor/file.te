@@ -16,6 +16,9 @@ type pps_socket, file_type;
 # HBM
 type vendor_sysfs_hbm, sysfs_type, fs_type;
 
+# Doze
+type sysfs_doze, sysfs_type, fs_type;
+
 # Torch
 type sysfs_torch, fs_type, sysfs_type;
 
