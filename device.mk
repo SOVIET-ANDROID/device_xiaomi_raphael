@@ -467,10 +467,6 @@ PRODUCT_USE_DYNAMIC_PARTITIONS := true
 PRODUCT_PACKAGES += \
     XiaomiParts
 
-# Powerstats
-PRODUCT_PACKAGES += \
-    android.hardware.power.stats@1.0-service.raphael
-
 # Partitions
 PRODUCT_PACKAGES += \
     vendor_bt_firmware_mountpoint \
