@@ -1,1 +1,2 @@
 type sysfs_displayfeatures, sysfs_type, fs_type;
+type sysfs_popup_led, sysfs_type, fs_type;

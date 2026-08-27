@@ -36,6 +36,8 @@
 
 # LEDs
 /sys/devices/platform/soc/[a-z0-9]+.qcom,spmi/spmi-[0-1]/spmi0-0[0-9]/[a-z0-9]+.qcom,spmi:qcom,[a-z0-9]+@[0-9]:qcom,leds@d000/leds(/.*)?    u:object_r:sysfs_leds:s0
+/sys/devices/platform/soc/[a-z0-9]+.qcom,spmi/spmi-[0-1]/spmi0-0[0-9]/[a-z0-9]+.qcom,spmi:qcom,[a-z0-9]+@[0-9]:qcom,leds@d000/leds/blue(/.*)?    u:object_r:sysfs_popup_led:s0
+/sys/devices/platform/soc/[a-z0-9]+.qcom,spmi/spmi-[0-1]/spmi0-0[0-9]/[a-z0-9]+.qcom,spmi:qcom,[a-z0-9]+@[0-9]:qcom,leds@d000/leds/green(/.*)?   u:object_r:sysfs_popup_led:s0
 
 # MAC
 /vendor/bin/nv_mac                                              u:object_r:vendor_wcnss_service_exec:s0
