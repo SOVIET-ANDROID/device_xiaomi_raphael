@@ -361,6 +361,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.light-service.lineage
 
+# LiveDisplay
+PRODUCT_PACKAGES += \
+    vendor.lineage.livedisplay-service.raphael
+
 # Logging
 SPAMMY_LOG_TAGS := \
     MiStcImpl \

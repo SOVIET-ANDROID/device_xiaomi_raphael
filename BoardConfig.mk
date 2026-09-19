@@ -90,6 +90,15 @@ TARGET_KERNEL_CLANG_VERSION := r563880c
 TARGET_KERNEL_SOURCE := kernel/xiaomi/raphael
 TARGET_KERNEL_CONFIG := raphael_defconfig
 
+
+# Livedisplay
+SOONG_CONFIG_NAMESPACES += xiaomiSm8150Vars
+SOONG_CONFIG_xiaomiSm8150Vars += \
+	     livedisplay_support_anti_flicker \
+	         livedisplay_support_sunlight_enhancement
+SOONG_CONFIG_raphaelVars_livedisplay_support_anti_flicker ?= true
+SOONG_CONFIG_raphaelVars_livedisplay_support_sunlight_enhancement ?= true
+
 # Media
 TARGET_USES_ION := true
 
