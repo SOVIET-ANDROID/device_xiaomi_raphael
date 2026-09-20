@@ -1,3 +1,5 @@
 type xiaomiparts_app, domain, coredomain;
 
 typeattribute xiaomiparts_app mlstrustedsubject;
+
+type sysfs_popup_led, sysfs_type, fs_type;
