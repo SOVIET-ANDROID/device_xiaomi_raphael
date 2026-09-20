@@ -92,8 +92,8 @@ TARGET_KERNEL_CONFIG := raphael_defconfig
 
 
 # Livedisplay
-SOONG_CONFIG_NAMESPACES += xiaomiSm8150Vars
-SOONG_CONFIG_xiaomiSm8150Vars += \
+SOONG_CONFIG_NAMESPACES += raphaelVars
+SOONG_CONFIG_raphaelVars += \
 	     livedisplay_support_anti_flicker \
 	         livedisplay_support_sunlight_enhancement
 SOONG_CONFIG_raphaelVars_livedisplay_support_anti_flicker ?= true
